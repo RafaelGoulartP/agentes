@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+    <marker id="seta-verde" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a7f37"/>
+    </marker>
+  </defs>
+
+  <!-- fundo próprio: legível no tema claro e no escuro do GitHub -->
+  <rect x="0" y="0" width="1200" height="620" rx="16" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="1199" height="619" rx="16" fill="none" stroke="#d0d7de"/>
+
+  <!-- GitHub -->
+  <text x="40" y="44" font-size="15" font-weight="700" fill="#24292f">GitHub</text>
+  <rect x="30" y="64" width="220" height="190" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="48" y="94" font-size="13" fill="#57606a">Issue aberta</text>
+  <text x="48" y="120" font-size="16" font-weight="700" fill="#24292f">#42 Corrigir o frete</text>
+  <text x="48" y="142" font-size="13" fill="#57606a">"O frete grátis não vale</text>
+  <text x="48" y="160" font-size="13" fill="#57606a">acima de R$ 200..."</text>
+  <rect x="48" y="180" width="62" height="24" rx="12" fill="#fbe9d0"/><text x="79" y="197" font-size="12" text-anchor="middle" fill="#9a4a00" font-weight="600">claude</text>
+  <rect x="118" y="180" width="112" height="24" rx="12" fill="#ddf4ff"/><text x="174" y="197" font-size="12" text-anchor="middle" fill="#0550ae" font-weight="600">area:checkout</text>
+  <text x="48" y="232" font-size="12" fill="#57606a">depende de #38 (opcional)</text>
+
+  <rect x="30" y="370" width="220" height="190" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="48" y="400" font-size="13" fill="#57606a">Pull request</text>
+  <text x="48" y="426" font-size="16" font-weight="700" fill="#24292f">#57 Corrige o frete</text>
+  <text x="48" y="450" font-size="13" fill="#1a7f37">✔ verificação passou</text>
+  <text x="48" y="470" font-size="13" fill="#57606a">resumo do agente</text>
+  <text x="48" y="490" font-size="13" fill="#57606a">arquivos sensíveis em destaque</text>
+  <rect x="48" y="508" width="160" height="24" rx="12" fill="#dafbe1"/><text x="128" y="525" font-size="12" text-anchor="middle" fill="#116329" font-weight="600">pronto-para-revisao</text>
+  <text x="140" y="586" font-size="13" text-anchor="middle" fill="#24292f" font-weight="600">Você revisa e faz o merge</text>
+
+  <!-- Sua máquina -->
+  <rect x="290" y="28" width="880" height="566" rx="16" fill="none" stroke="#8c959f" stroke-dasharray="7 6"/>
+  <rect x="306" y="16" width="290" height="24" fill="#ffffff"/>
+  <text x="314" y="34" font-size="15" font-weight="700" fill="#24292f">Sua máquina (Linux ou Windows + WSL2)</text>
+
+  <!-- Orquestrador -->
+  <rect x="320" y="64" width="270" height="250" rx="12" fill="#f3f0ff" stroke="#8250df"/>
+  <text x="340" y="94" font-size="16" font-weight="700" fill="#5a32a3">Orquestrador</text>
+  <text x="340" y="114" font-size="12" fill="#6e7781">Node.js, sem dependências</text>
+  <g font-size="13" fill="#24292f">
+    <text x="340" y="146">1. lê as issues com etiqueta</text>
+    <text x="340" y="172">2. abre a sala do agente</text>
+    <text x="340" y="198">3. coleta os commits (bundle)</text>
+    <text x="340" y="224">4. junta com a main atual</text>
+    <text x="340" y="250">5. verifica numa sala limpa</text>
+    <text x="340" y="276">6. push (sem force) e PR</text>
+  </g>
+  <text x="340" y="300" font-size="12" fill="#8250df" font-weight="600">🔑 único que tem o token</text>
+
+  <!-- Painel -->
+  <rect x="320" y="370" width="270" height="190" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="340" y="400" font-size="16" font-weight="700" fill="#24292f">Painel web</text>
+  <text x="340" y="420" font-size="12" fill="#6e7781">127.0.0.1:7788</text>
+  <g font-size="13" fill="#24292f">
+    <text x="340" y="450">tarefas, salas, logs, eventos</text>
+    <text x="340" y="474">tentar de novo, pedir ajuste</text>
+    <text x="340" y="498">prévia do app antes do merge</text>
+    <text x="340" y="522">avisos no celular (opcional)</text>
+  </g>
+  <line x1="455" y1="314" x2="455" y2="368" stroke="#8c959f" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="463" y="346" font-size="11" fill="#6e7781">lê o estado</text>
+
+  <!-- Sala do agente -->
+  <rect x="660" y="64" width="490" height="250" rx="12" fill="#fff8f0" stroke="#d97706"/>
+  <text x="680" y="94" font-size="16" font-weight="700" fill="#9a4a00">Sala do agente (descartável)</text>
+  <text x="680" y="114" font-size="12" fill="#6e7781">rede interna sem rota para a internet · até 4 GiB e 2 CPUs</text>
+  <rect x="680" y="130" width="140" height="110" rx="10" fill="#ffffff" stroke="#e0b98a"/>
+  <text x="750" y="160" font-size="14" text-anchor="middle" font-weight="700" fill="#24292f">Agente</text>
+  <text x="750" y="182" font-size="12" text-anchor="middle" fill="#57606a">Claude Code</text>
+  <text x="750" y="200" font-size="12" text-anchor="middle" fill="#57606a">ou Codex</text>
+  <text x="750" y="224" font-size="11" text-anchor="middle" fill="#6e7781">código + login da CLI</text>
+  <rect x="834" y="130" width="140" height="110" rx="10" fill="#ffffff" stroke="#e0b98a"/>
+  <text x="904" y="160" font-size="14" text-anchor="middle" font-weight="700" fill="#24292f">Docker privado</text>
+  <text x="904" y="182" font-size="12" text-anchor="middle" fill="#57606a">bancos e serviços</text>
+  <text x="904" y="200" font-size="12" text-anchor="middle" fill="#57606a">de teste</text>
+  <text x="904" y="224" font-size="11" text-anchor="middle" fill="#6e7781">sem o Docker do host</text>
+  <rect x="988" y="130" width="142" height="110" rx="10" fill="#ffffff" stroke="#e0b98a"/>
+  <text x="1059" y="160" font-size="14" text-anchor="middle" font-weight="700" fill="#24292f">Proxy de saída</text>
+  <text x="1059" y="182" font-size="12" text-anchor="middle" fill="#57606a">só domínios</text>
+  <text x="1059" y="200" font-size="12" text-anchor="middle" fill="#57606a">da lista</text>
+  <text x="1059" y="224" font-size="11" text-anchor="middle" fill="#cf222e">produção bloqueada</text>
+  <text x="680" y="270" font-size="12" fill="#57606a">✘ sem token do GitHub   ✘ sem git push   ✘ sem acesso à sua máquina</text>
+  <text x="680" y="294" font-size="12" fill="#57606a">✔ commits e um resumo "STATUS: COMPLETO" quando termina</text>
+
+  <!-- Sala de verificação -->
+  <rect x="660" y="370" width="490" height="190" rx="12" fill="#f0fff4" stroke="#1a7f37"/>
+  <text x="680" y="400" font-size="16" font-weight="700" fill="#116329">Sala de verificação (limpa)</text>
+  <text x="680" y="420" font-size="12" fill="#6e7781">sem credenciais nenhuma</text>
+  <g font-size="13" fill="#24292f">
+    <text x="680" y="452">roda os testes do .laboratorio.json da main</text>
+    <text x="680" y="476">(o agente não consegue enfraquecer a verificação)</text>
+    <text x="680" y="500">grupos em paralelo: lint, build, testes, e2e...</text>
+  </g>
+  <text x="680" y="532" font-size="12" fill="#57606a">falhou? o agente recebe o log e tenta corrigir</text>
+
+  <!-- setas -->
+  <path d="M250 150 H316" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#seta)"/>
+  <path d="M590 140 H656" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#seta)"/>
+  <text x="623" y="132" font-size="11" text-anchor="middle" fill="#57606a">código</text>
+  <path d="M656 230 H594" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#seta)"/>
+  <text x="623" y="222" font-size="11" text-anchor="middle" fill="#57606a">commits</text>
+  <path d="M590 250 C 625 250, 620 420, 656 420" stroke="#1a7f37" stroke-width="2" fill="none" marker-end="url(#seta-verde)"/>
+  <path d="M656 480 C 610 480, 610 300, 594 288" stroke="#1a7f37" stroke-width="2" fill="none" stroke-dasharray="5 4" marker-end="url(#seta-verde)"/>
+  <text x="640" y="350" font-size="11" fill="#116329" text-anchor="middle">testa</text>
+  <text x="600" y="460" font-size="11" fill="#116329" text-anchor="middle">passou</text>
+  <path d="M320 276 C 280 276, 280 440, 254 440" stroke="#1a7f37" stroke-width="2.5" fill="none" marker-end="url(#seta-verde)"/>
+  <text x="262" y="356" font-size="11" fill="#116329" transform="rotate(-90 262 356)">push + PR</text>
+</svg>

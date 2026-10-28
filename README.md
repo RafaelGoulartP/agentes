@@ -10,18 +10,23 @@ um pull request já testado, pronto para a sua revisão.
 > re-verified in a clean room before the controller pushes and opens the PR. The UI and docs are in
 > Brazilian Portuguese. See [docs/INSTALACAO.md](docs/INSTALACAO.md) to get started.
 
-```
- Issue no GitHub              Sua máquina (Linux ou Windows + WSL2)                         GitHub
- ┌──────────────┐   ┌──────────────────────────────────────────────────────────────┐   ┌───────────┐
- │ #42 Corrigir │   │  Orquestrador (Node, sem dependências npm)                   │   │           │
- │ o login      │──▶│   1. lê issues com etiqueta  claude / codex                  │   │  PR #57   │
- │ [claude]     │   │   2. abre uma SALA para o agente ──┐                         │──▶│  pronto   │
- │ [area:auth]  │   │   3. coleta os commits (bundle)    │  sala: agente + Docker  │   │  para     │
- └──────────────┘   │   4. verifica numa SALA LIMPA      │  privado + proxy com    │   │  revisão  │
-                    │   5. faz push e abre o PR          │  lista de domínios      │   └───────────┘
-                    │  Painel web em 127.0.0.1:7788 ◀────┘                         │
-                    └──────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/imagens/painel-escuro.png">
+    <img src="docs/imagens/painel-agora.png" alt="Painel do laboratório: três salas rodando, dois PRs aguardando aprovação e a atividade ao vivo de cada agente" width="900">
+  </picture>
+</p>
+
+## Como funciona
+
+<p align="center">
+  <img src="docs/imagens/arquitetura.svg" alt="Fluxo: issue no GitHub, orquestrador, sala do agente isolada, sala de verificação limpa e pull request" width="900">
+</p>
+
+1. Você abre uma issue e coloca a etiqueta `claude` ou `codex`.
+2. O orquestrador abre uma **sala** isolada e o agente trabalha numa cópia do código, sem o token do GitHub.
+3. Os commits saem da sala e são **testados de novo numa sala limpa**, com os testes definidos na sua `main`.
+4. Passou: o orquestrador faz o push e abre o PR. Você revisa e faz o merge.
 
 ## O que ele faz
 
@@ -46,6 +51,15 @@ um pull request já testado, pronto para a sua revisão.
 - **Vários projetos.** Adicione repositórios pela aba **Projetos** do painel. Cada um tem estado,
   imagens e salas separados, e as vagas são divididas entre eles.
 
+## Painel
+
+| Tarefas de todos os projetos | Projetos | No celular |
+|---|---|---|
+| <img src="docs/imagens/painel-tarefas.png" alt="Aba Tarefas com filtros por estado, agente e projeto" width="420"> | <img src="docs/imagens/painel-projetos.png" alt="Aba Projetos com dois repositórios prontos e o formulário para adicionar outro" width="420"> | <img src="docs/imagens/painel-celular.png" alt="Painel no celular" width="180"> |
+
+As imagens usam dados de demonstração (`node scripts/demo-painel.mjs`); para gerá-las de novo, veja
+`scripts/capturas.mjs`.
+
 ## Requisitos
 
 | | Mínimo | Observação |
@@ -61,6 +75,9 @@ um pull request já testado, pronto para a sua revisão.
 ## Começo rápido
 
 O passo a passo completo, do zero, está em **[docs/INSTALACAO.md](docs/INSTALACAO.md)**.
+
+**Quanto tempo leva:** uns 30 minutos se você já tem Docker e Node; de 1 a 2 horas num Windows do zero
+(WSL, Docker Desktop e reinicialização). Depois, a primeira imagem de cada projeto leva mais 5 a 20 minutos.
 Resumo para quem já tem Docker e Node:
 
 ```bash
