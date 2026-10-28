@@ -1,3 +1,3 @@
 # Valores falsos usados pelos testes do filtro que remove segredos dos logs (não são credenciais).
-2cbc7bf85c5e5811a8b40d9487772113b63bec60:orchestrator/test/redact-lock.test.mjs:generic-api-key:22
-2cbc7bf85c5e5811a8b40d9487772113b63bec60:orchestrator/test/push.test.mjs:generic-api-key:73
+ce6ddf3473d4d4730c9f50575413d4ead1e46118:orchestrator/test/redact-lock.test.mjs:generic-api-key:22
+ce6ddf3473d4d4730c9f50575413d4ead1e46118:orchestrator/test/push.test.mjs:generic-api-key:73
