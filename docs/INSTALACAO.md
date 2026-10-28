@@ -220,6 +220,9 @@ ligam com o computador. Sem systemd (macOS, ou WSL sem systemd), rode em dois te
    com as etiquetas `claude` e `area:docs`.
 6. Acompanhe na aba **Agora**. Em alguns minutos aparece o PR com a etiqueta `pronto-para-revisao`.
 
+Para os agentes acertarem mais, prepare o repositório com um `AGENTS.md` e issues bem escritas:
+veja **[PREPARAR-PROJETO.md](PREPARAR-PROJETO.md)**.
+
 ---
 
 ## Painel no celular (opcional)

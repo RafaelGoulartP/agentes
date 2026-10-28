@@ -76,6 +76,13 @@ confere o acesso e cria as etiquetas. Se o repositório ainda não tem `.laborat
 **Gerar configuração**: o laboratório abre uma issue para o Codex escrever esse arquivo. Revise e faça
 o merge do PR. O laboratório constrói a imagem do projeto e passa a atender as issues.
 
+## Preparar o seu projeto
+
+Os agentes trabalham melhor quando o repositório explica a si mesmo. O guia
+**[docs/PREPARAR-PROJETO.md](docs/PREPARAR-PROJETO.md)** mostra o que deixar pronto no GitHub: o
+`.laboratorio.json`, um `AGENTS.md` que o agente lê antes de cada tarefa (com modelo para copiar),
+como escrever boas issues (com template) e como revisar e pedir ajustes.
+
 ## Como usar no dia a dia
 
 1. Crie uma issue descrevendo o que quer, com critérios de aceitação claros.
@@ -145,7 +152,7 @@ images/              Dockerfiles das salas (base do projeto + Claude Code / Code
 proxy/               proxy de saída (Squid) e lista de domínios liberados
 systemd/             modelos dos serviços do usuário
 secrets/             SÓ modelos *.example; os arquivos reais ficam fora do Git
-docs/                instalação, configuração e decisões
+docs/                instalação, preparar o projeto, configuração e decisões
 ```
 
 ## Para agentes de IA

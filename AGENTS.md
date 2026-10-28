@@ -88,8 +88,11 @@ Guie a pessoa no painel (`http://127.0.0.1:7788`, aba **Projetos**). Se ela pedi
 
 ## Adaptar para o projeto da pessoa
 
-O ponto de adaptação principal é o **`.laboratorio.json` no repositório do projeto**, não o código do
-laboratório. Referência completa em [docs/CONFIGURACAO.md](docs/CONFIGURACAO.md).
+O ponto de adaptação principal é o **repositório do projeto** (`.laboratorio.json` e `AGENTS.md`),
+não o código do laboratório. Guia completo, com modelos de `AGENTS.md` e de issue, em
+[docs/PREPARAR-PROJETO.md](docs/PREPARAR-PROJETO.md); referência dos campos em
+[docs/CONFIGURACAO.md](docs/CONFIGURACAO.md). Se a pessoa pedir, escreva também o `AGENTS.md` do
+projeto dela seguindo o modelo do guia, a partir do que você leu no código e no CI.
 
 Para escrever um bom `.laboratorio.json`:
 
