@@ -1,14 +1,30 @@
-# Laboratório de Agentes
+<h1 align="center">Laboratório de Agentes</h1>
 
-Rode **Claude Code** e **Codex** como desenvolvedores do seu repositório no GitHub, na sua própria máquina,
-cada tarefa numa sala Docker isolada e descartável. Você escreve uma issue, coloca uma etiqueta e recebe
-um pull request já testado, pronto para a sua revisão.
+<p align="center">
+  <b>Escreva uma issue. Receba um pull request testado.</b><br>
+  Claude Code e Codex trabalhando como desenvolvedores do seu repositório, na sua máquina, em salas Docker isoladas.
+</p>
 
-> **English summary:** a self-hosted orchestrator that turns labeled GitHub issues into verified pull
-> requests using Claude Code and Codex CLI. Each task runs in a disposable Docker "room" with its own
-> network, egress proxy and Docker-in-Docker; agents never receive GitHub credentials. Results are
-> re-verified in a clean room before the controller pushes and opens the PR. The UI and docs are in
-> Brazilian Portuguese. See [docs/INSTALACAO.md](docs/INSTALACAO.md) to get started.
+<p align="center">
+  <a href="https://github.com/__REPO__/actions/workflows/testes.yml"><img src="https://github.com/__REPO__/actions/workflows/testes.yml/badge.svg" alt="testes"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue" alt="Licença MIT"></a>
+  <img src="https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white" alt="Node 22+">
+  <img src="https://img.shields.io/badge/depend%C3%AAncias%20npm-0-brightgreen" alt="zero dependências npm">
+  <img src="https://img.shields.io/badge/status-beta-orange" alt="beta">
+  <img src="https://img.shields.io/badge/feito%20com-IA-8250df" alt="feito com IA">
+</p>
+
+<p align="center">
+  <a href="docs/INSTALACAO.md">Instalação</a> ·
+  <a href="docs/PREPARAR-PROJETO.md">Preparar seu projeto</a> ·
+  <a href="docs/CONFIGURACAO.md">Configuração</a> ·
+  <a href="AGENTS.md">Para agentes de IA</a> ·
+  <a href="README.en.md">🇺🇸 English</a>
+</p>
+
+> **Você dorme, os agentes trabalham.** Coloque a etiqueta `claude` ou `codex` numa issue e o
+> laboratório faz o resto: abre uma sala descartável, deixa o agente programar, testa o resultado de
+> novo numa sala limpa e só então abre o PR. O merge é sempre seu.
 
 <p align="center">
   <picture>
@@ -27,6 +43,17 @@ um pull request já testado, pronto para a sua revisão.
 2. O orquestrador abre uma **sala** isolada e o agente trabalha numa cópia do código, sem o token do GitHub.
 3. Os commits saem da sala e são **testados de novo numa sala limpa**, com os testes definidos na sua `main`.
 4. Passou: o orquestrador faz o push e abre o PR. Você revisa e faz o merge.
+
+## Por que é diferente
+
+| | Agente no seu terminal | Laboratório de Agentes |
+|---|---|---|
+| Quantas tarefas ao mesmo tempo | uma, com você olhando | até 3, sozinhas, a partir da fila de issues |
+| Onde o agente roda | na sua máquina, com seus arquivos e tokens | numa sala Docker descartável, sem token do GitHub |
+| Quem garante que funciona | o próprio agente diz que testou | uma sala limpa roda os **seus** testes de novo |
+| Acesso à internet | livre | só domínios de uma lista; produção bloqueada |
+| Quando a cota acaba | você espera e lembra de voltar | pausa e retoma sozinho no horário de renovação |
+| Resultado | mudanças na sua pasta | um PR com resumo, testes e pontos de atenção |
 
 ## O que ele faz
 
@@ -81,7 +108,7 @@ O passo a passo completo, do zero, está em **[docs/INSTALACAO.md](docs/INSTALAC
 Resumo para quem já tem Docker e Node:
 
 ```bash
-git clone https://github.com/<voce>/laboratorio-agentes.git ~/laboratorio-agentes
+git clone https://github.com/__REPO__.git ~/laboratorio-agentes
 cd ~/laboratorio-agentes
 ./scripts/instalar.sh            # confere tudo, cria os arquivos locais e roda os testes
 nano secrets/github-controller.env   # cole o token do GitHub em GH_TOKEN=
@@ -196,6 +223,19 @@ Mais diagnósticos em [docs/INSTALACAO.md](docs/INSTALACAO.md#resolvendo-problem
 cd orchestrator && npm test                                   # unidade e integração local (~10 s)
 LAB_DOCKER_TEST=1 node --test test/docker-integration.test.mjs  # salas reais com agente falso (~3 min)
 ```
+
+## Feito com IA
+
+Este projeto foi criado em parceria com inteligência artificial. A ideia, as decisões e as revisões
+são humanas; boa parte do código, dos testes e da documentação foi escrita com o **Claude Code** e o
+**Codex**, os mesmos agentes que o laboratório coloca para trabalhar. É um pouco de IA ajudando a
+construir a casa onde ela mesma vai trabalhar, com as portas trancadas.
+
+## Contribua
+
+Achou um problema, instalou num sistema diferente ou tem uma ideia? Abra uma
+[issue](https://github.com/__REPO__/issues) ou um PR (veja [CONTRIBUTING.md](CONTRIBUTING.md)).
+Se o projeto te ajudou, deixe uma ⭐: isso ajuda outras pessoas a encontrá-lo.
 
 ## Licença
 
