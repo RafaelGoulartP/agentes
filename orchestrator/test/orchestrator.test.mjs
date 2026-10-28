@@ -14,6 +14,8 @@ const SHA_MAIN = 'e'.repeat(40);
 
 function fixture({ issues, maxAttempts = 3, health = null } = {}) {
   const config = {
+    // Fuso fixo: as mensagens de cota com horário ("try again at 3:15 PM") não podem depender da máquina do teste.
+    timeZone: 'America/Sao_Paulo',
     github: { owner: 'o', repo: 'r' },
     labels: { agents: ['codex', 'claude'], inProgress: 'em-andamento', blocked: 'bloqueado', readyForReview: 'pronto-para-revisao', areaPrefix: 'area:' },
     scheduler: { maxConcurrency: 2, hardMaxConcurrency: 3, defaultArea: 'geral' },
