@@ -1,5 +1,7 @@
 # Configuração
 
+*[English](en/CONFIGURATION.md)*
+
 O laboratório tem quatro lugares de configuração. Só o `.laboratorio.json` fica no repositório do
 **seu projeto**. Os outros ficam na pasta do laboratório, e só os modelos (`*.example`) vão para o Git.
 

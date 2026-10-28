@@ -1,7 +1,7 @@
 <h1 align="center">Agentes</h1>
 
 <p align="center">
-  <i>(“agents” in Portuguese) an AI agents lab for your GitHub repositories</i><br>
+  <i>(“agents” in Portuguese) runs AI coding agents on your GitHub issues</i><br>
   <b>Write an issue. Get a tested pull request.</b><br>
   Claude Code and Codex working as developers on your GitHub repo, on your own machine, inside isolated Docker rooms.
 </p>
@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/built%20with-AI-8250df" alt="built with AI">
 </p>
 
-<p align="center"><a href="README.md">🇧🇷 Português</a> (main docs, UI and messages are in Brazilian Portuguese)</p>
+<p align="center"><a href="README.md">🇧🇷 Português</a> (the dashboard and the lab's GitHub messages are in Brazilian Portuguese; the main guides are in both languages)</p>
 
 <p align="center">
   <picture>
@@ -84,7 +84,8 @@ Open **http://127.0.0.1:7788**, go to **Projetos** (Projects) and add your repos
 (how to install, test and preview it). Merge that PR and start labeling issues.
 
 Time to first PR: ~30 min if you already have Docker and Node; 1–2 h on a fresh Windows machine.
-Step-by-step guide (Portuguese): [docs/INSTALACAO.md](docs/INSTALACAO.md). Machine translation works well on it.
+Step-by-step guide: [docs/en/INSTALL.md](docs/en/INSTALL.md). Then [prepare your project](docs/en/PREPARE-PROJECT.md)
+(`AGENTS.md`, good issues) and see the [configuration reference](docs/en/CONFIGURATION.md).
 
 **Using an AI agent to install it?** Point it to [AGENTS.md](AGENTS.md): it contains a full install
 and adaptation playbook with safety rules.
@@ -95,7 +96,7 @@ Agents and issue text are treated as untrusted. Rooms have no GitHub credentials
 only allowlisted egress; production domains are denied before any allow rule; logs are scrubbed of
 tokens; changes to `.github/workflows` block delivery; humans always merge. Known limits (CLI login is
 copied into the room, DinD runs privileged, the dashboard has no auth and binds to 127.0.0.1) are
-documented in [SECURITY.md](SECURITY.md).
+documented in [docs/en/SECURITY.md](docs/en/SECURITY.md).
 
 ## Built with AI
 

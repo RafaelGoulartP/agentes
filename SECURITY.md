@@ -1,5 +1,7 @@
 # Segurança
 
+*[English](docs/en/SECURITY.md)*
+
 ## Modelo de ameaça
 
 O laboratório assume que **o agente e o conteúdo das issues não são confiáveis**: um agente pode errar,

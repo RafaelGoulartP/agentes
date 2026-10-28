@@ -1,5 +1,7 @@
 # Preparar um projeto para os agentes
 
+*[English](en/PREPARE-PROJECT.md)*
+
 Este guia é sobre o **seu repositório** (o projeto em que os agentes vão trabalhar), não sobre o
 laboratório. Um projeto bem preparado tem três coisas:
 

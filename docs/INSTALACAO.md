@@ -1,5 +1,7 @@
 # Instalação passo a passo
 
+*[English](en/INSTALL.md)*
+
 Este guia leva do zero até o primeiro PR feito por um agente. Leva de 30 a 60 minutos, a maior parte
 esperando downloads. Escolha o seu sistema:
 
@@ -241,7 +243,7 @@ o [Tailscale](https://tailscale.com) (VPN gratuita para uso pessoal):
   tailscale serve --bg http://127.0.0.1:7789
   ```
 
-  O botão **Celular** do painel mostra os endereços. Pelo endereço `https://` o celular instala o
+  A seção **Abrir no celular**, na aba **Sistema** do painel, mostra os endereços. Pelo endereço `https://` o celular instala o
   painel como app e recebe avisos (Web Push).
 
 ---
