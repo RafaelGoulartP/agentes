@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/__REPO__/actions/workflows/testes.yml"><img src="https://github.com/__REPO__/actions/workflows/testes.yml/badge.svg" alt="tests"></a>
+  <a href="https://github.com/RafaelGoulartP/agents-publico/actions/workflows/testes.yml"><img src="https://github.com/RafaelGoulartP/agents-publico/actions/workflows/testes.yml/badge.svg" alt="tests"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white" alt="Node 22+">
   <img src="https://img.shields.io/badge/npm%20dependencies-0-brightgreen" alt="zero npm dependencies">
@@ -71,7 +71,7 @@
 Requirements: Linux or Windows 10/11 with WSL2, Docker, Node.js 22+, and a Claude and/or Codex login.
 
 ```bash
-git clone https://github.com/__REPO__.git ~/laboratorio-agentes
+git clone https://github.com/RafaelGoulartP/agents-publico.git ~/laboratorio-agentes
 cd ~/laboratorio-agentes
 ./scripts/instalar.sh                      # checks everything, creates local files, runs the tests
 nano secrets/github-controller.env         # paste a fine-grained GitHub token into GH_TOKEN=

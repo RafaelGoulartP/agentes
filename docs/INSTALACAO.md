@@ -162,7 +162,7 @@ e inclua o repositório. Não é preciso trocar o token.
 
 ```bash
 cd ~
-git clone https://github.com/__REPO__.git laboratorio-agentes
+git clone https://github.com/RafaelGoulartP/agents-publico.git laboratorio-agentes
 cd laboratorio-agentes
 ./scripts/instalar.sh
 ```
