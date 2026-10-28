@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel dos Agentes</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#f4f5f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0e14" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Agentes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root {
+  --bg: #f4f5f8; --surface: #ffffff; --surface-2: #f8f9fb; --ink: #101828; --ink-2: #344054; --muted: #667085;
+  --line: #e4e7ec; --line-2: #eef0f3; --accent: #4f5bd5; --accent-soft: #eef0fd;
+  --ok: #12875a; --ok-soft: #e6f5ee; --warn: #b4690e; --warn-soft: #fdf3e3; --bad: #c8322f; --bad-soft: #fdeceb;
+  --info: #2f6fde; --info-soft: #e9f1fd; --idle: #8a94a6; --idle-soft: #f0f2f5;
+  --codex: #0e8a8c; --codex-soft: #e3f4f4; --claude: #c2622a; --claude-soft: #fbeee5;
+  --code-bg: #0f1420; --code-ink: #d6deeb;
+  --shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0e14; --surface: #131821; --surface-2: #19202b; --ink: #e7eaf0; --ink-2: #c3c9d4; --muted: #8e98aa;
+    --line: #252d3b; --line-2: #1d2430; --accent: #8b95ff; --accent-soft: #1f2442;
+    --ok: #3ccf8e; --ok-soft: #10281e; --warn: #f2b54a; --warn-soft: #2d2311; --bad: #ff6b66; --bad-soft: #331718;
+    --info: #6ea2ff; --info-soft: #14223a; --idle: #7d879a; --idle-soft: #1b212c;
+    --codex: #3cc8ca; --codex-soft: #0f2a2b; --claude: #f29a62; --claude-soft: #2f1d12;
+    --code-bg: #080b10; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0e14; --surface: #131821; --surface-2: #19202b; --ink: #e7eaf0; --ink-2: #c3c9d4; --muted: #8e98aa;
+  --line: #252d3b; --line-2: #1d2430; --accent: #8b95ff; --accent-soft: #1f2442;
+  --ok: #3ccf8e; --ok-soft: #10281e; --warn: #f2b54a; --warn-soft: #2d2311; --bad: #ff6b66; --bad-soft: #331718;
+  --info: #6ea2ff; --info-soft: #14223a; --idle: #7d879a; --idle-soft: #1b212c;
+  --codex: #3cc8ca; --codex-soft: #0f2a2b; --claude: #f29a62; --claude-soft: #2f1d12;
+  --code-bg: #080b10; --shadow: none;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+/* Só o body corta o lado: com overflow também no html, o body vira caixa de rolagem própria e a barra de abas solta no iPhone. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overscroll-behavior-x: none; }
+body { overscroll-behavior-x: none; touch-action: manipulation; margin: 0; background: var(--bg); color: var(--ink); font: 14.5px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; overflow-x: hidden; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font: inherit; color: inherit; }
+svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Cabeçalho e navegação */
+header { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: saturate(1.6) blur(12px); -webkit-backdrop-filter: saturate(1.6) blur(12px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+.bar { max-width: 1280px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand img { width: 30px; height: 30px; border-radius: 8px; }
+.brand h1 { font-size: 16px; margin: 0; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; }
+.brand .repo { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grow { flex: 1; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.updated { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.icon-btn { position: relative; display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; flex: none; }
+.icon-btn:hover { background: var(--surface-2); }
+.icon-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); border: 2px solid var(--surface); }
+nav.tabs { max-width: 1280px; margin: 0 auto; padding: 0 12px; display: flex; gap: 4px; }
+nav.tabs button { display: inline-flex; align-items: center; gap: 7px; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 9px 10px 10px; cursor: pointer; font-size: 14px; font-weight: 500; }
+nav.tabs button.on { color: var(--ink); border-color: var(--accent); font-weight: 650; }
+nav.tabs .count { font-size: 11px; font-weight: 700; padding: 0 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 40px; overflow-x: clip; }
+@media (max-width: 760px) {
+  /* Sem desfoque no cabeçalho: ele prenderia a barra de abas (position: fixed) dentro dele. */
+  header { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--surface); }
+  .updated, .brand .repo { display: none; }
+  nav.tabs { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; max-width: none; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); gap: 0;
+    background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: saturate(1.6) blur(12px); -webkit-backdrop-filter: saturate(1.6) blur(12px); border-top: 1px solid var(--line); }
+  nav.tabs button { flex: 1; min-width: 0; flex-direction: column; gap: 2px; padding: 6px 2px; font-size: 10.5px; border-bottom: 0; border-radius: 10px; position: relative; }
+  nav.tabs button[data-tab="execucoes"] { display: none; }
+  nav.tabs button.on { background: var(--accent-soft); color: var(--accent); }
+  nav.tabs .count { position: absolute; top: 2px; right: calc(50% - 22px); font-size: 10px; padding: 0 5px; background: var(--accent); color: #fff; }
+  main { padding: 14px 12px calc(84px + env(safe-area-inset-bottom)); }
+  .status .label-long { display: none; }
+}
+
+/* Blocos */
+.section { margin-top: 22px; }
+.section:first-child { margin-top: 0; }
+.section-head { display: flex; align-items: baseline; gap: 8px; margin: 0 2px 10px; }
+.section-head h2 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: -.01em; }
+.section-head .n { color: var(--muted); font-size: 13px; font-weight: 600; }
+.section-head .grow + * { font-size: 13px; }
+/* Seção que abre e fecha: o título é o botão. */
+details.fold { margin-top: 22px; }
+details.fold > summary { display: flex; color: var(--ink); margin-bottom: 0; padding: 4px 2px; }
+details.fold > summary::before { color: var(--muted); align-self: center; }
+details.fold[open] > summary { margin-bottom: 10px; }
+details.fold > summary .hint { color: var(--muted); font-size: 12.5px; font-weight: 500; }
+details.warns > summary { color: var(--warn, inherit); font-size: 12.5px; }
+.cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+.cards.wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); }
+.cards.small { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; box-shadow: var(--shadow); overflow-wrap: anywhere; }
+.card.click { cursor: pointer; transition: border-color .15s, transform .15s; }
+.card.click:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.card.tone-bad { border-left: 3px solid var(--bad); }
+.card.tone-warn { border-left: 3px solid var(--warn); }
+.card.tone-ok { border-left: 3px solid var(--ok); }
+.card.tone-info { border-left: 3px solid var(--info); }
+.card h3 { font-size: 15px; line-height: 1.35; margin: 8px 0 6px; font-weight: 650; letter-spacing: -.005em; }
+.card-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.issue-no { font-weight: 700; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+.meta b { color: var(--ink-2); font-weight: 600; }
+.sub { color: var(--muted); font-size: 12.5px; }
+.empty { color: var(--muted); padding: 22px 16px; text-align: center; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
+.mono { font-family: ui-monospace, "SF Mono", Consolas, "Cascadia Mono", monospace; font-size: 12.5px; }
+.clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.clamp4 { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Etiquetas */
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--idle-soft); color: var(--muted); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); } .pill.info { background: var(--info-soft); color: var(--info); }
+.pill.plain { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line); font-weight: 500; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+.pulse .dot { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .pulse .dot { animation: none; } }
+.agent { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+.agent-codex { background: var(--codex-soft); color: var(--codex); } .agent-claude { background: var(--claude-soft); color: var(--claude); }
+.s-ok { color: var(--ok); } .s-warn { color: var(--warn); } .s-bad { color: var(--bad); } .s-info { color: var(--info); } .s-idle { color: var(--muted); }
+
+/* Botões */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); border-radius: 9px; padding: 7px 12px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn:hover { background: var(--surface-2); text-decoration: none; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn.danger { color: var(--bad); }
+.btn[disabled] { opacity: .55; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.chip.on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.accounts .chip { cursor: default; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+select, input[type=text], input[type=search] { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 9px; padding: 7px 10px; font: inherit; font-size: 13.5px; min-width: 0; }
+input[type=search] { flex: 1 1 200px; }
+
+/* Indicadores */
+.kpis { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 760px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow); min-width: 0; }
+.kpi .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+.kpi .v { font-size: 26px; font-weight: 750; letter-spacing: -.02em; line-height: 1.2; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.kpi .v small { font-size: 14px; color: var(--muted); font-weight: 600; }
+.kpi .h { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Alertas */
+.alert { display: flex; gap: 10px; align-items: flex-start; border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; border: 1px solid; }
+.alert.bad { background: var(--bad-soft); border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+.alert.warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
+.alert .i { margin-top: 2px; }
+.alert.bad .i { color: var(--bad); } .alert.warn .i { color: var(--warn); }
+
+/* Etapas da tarefa */
+.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 12px 0 4px; }
+.step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted); text-align: center; }
+.step::before { content: ""; position: absolute; top: 5px; right: 50%; width: 100%; height: 2px; background: var(--line); }
+.step:first-child::before { display: none; }
+.step.done::before, .step.on::before { background: var(--ok); }
+.step i { position: relative; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); }
+.step.done i { background: var(--ok); border-color: var(--ok); }
+.step.on i { background: var(--info); border-color: var(--info); box-shadow: 0 0 0 4px var(--info-soft); }
+.step.on { color: var(--info); font-weight: 700; }
+
+/* Atividade ao vivo */
+.now { display: grid; gap: 8px; margin-top: 12px; }
+.say, .think, .doing { border-radius: 10px; padding: 9px 11px; font-size: 13.5px; }
+.say { background: var(--accent-soft); color: var(--ink); }
+.think { background: var(--surface-2); color: var(--ink-2); font-style: italic; border: 1px dashed var(--line); }
+.doing { background: var(--code-bg); color: var(--code-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12.5px; }
+.now .lbl { display: flex; align-items: center; gap: 6px; font-style: normal; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 3px; }
+.doing .lbl { color: #8b95a7; }
+.now p { margin: 0; white-space: pre-wrap; }
+details { margin-top: 10px; }
+details > summary { cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 600; list-style: none; display: inline-flex; align-items: center; gap: 4px; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸"; transition: transform .15s; }
+details[open] > summary::before { transform: rotate(90deg); }
+.feed { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; max-height: 420px; overflow-y: auto; }
+.feed li { display: grid; grid-template-columns: 44px 1fr; gap: 8px; font-size: 12.5px; }
+.feed .tm { color: var(--muted); font-variant-numeric: tabular-nums; }
+.feed .k-tool { font-family: ui-monospace, "SF Mono", Consolas, monospace; color: var(--ink-2); }
+.feed .k-thinking { font-style: italic; color: var(--muted); }
+.feed .k-error { color: var(--bad); }
+.feed .tx { white-space: pre-wrap; min-width: 0; }
+
+/* Linha do tempo e barras */
+.timeline { position: relative; height: 10px; background: var(--line-2); border-radius: 999px; overflow: hidden; margin: 10px 0 6px; }
+.timeline span { position: absolute; top: 0; bottom: 0; border-radius: 999px; }
+.bars .row { display: grid; grid-template-columns: minmax(0, 40%) 1fr 56px; gap: 8px; align-items: center; margin: 6px 0; font-size: 12.5px; }
+.bars .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bars .track { background: var(--line-2); border-radius: 4px; height: 10px; overflow: hidden; }
+.bars .fill { display: block; height: 100%; border-radius: 4px; }
+.bars .val { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meter { height: 6px; background: var(--line-2); border-radius: 999px; overflow: hidden; margin-top: 6px; }
+.meter span { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+.spark { width: 100%; height: 70px; display: block; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.legend .dot { margin-right: 4px; }
+
+/* Listas (eventos, contêineres) */
+.list { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.list .item { display: flex; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--line-2); align-items: flex-start; min-width: 0; }
+.list .item:first-child { border-top: 0; }
+.list .day { padding: 8px 14px; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--surface-2); border-top: 1px solid var(--line-2); text-transform: uppercase; letter-spacing: .04em; }
+.list .day:first-child { border-top: 0; }
+.list .tm { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; width: 42px; flex: none; padding-top: 1px; }
+.list .body { min-width: 0; flex: 1; }
+.list .title { font-weight: 600; font-size: 13.5px; }
+.list .dot { margin-top: 7px; }
+.kv { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 3px; }
+.kv span { font-size: 12px; color: var(--muted); background: var(--surface-2); border-radius: 6px; padding: 1px 7px; overflow-wrap: anywhere; }
+.box { display: grid; gap: 8px; margin-top: 10px; }
+.ctr { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); }
+.ctr .nm { font-weight: 600; font-size: 13.5px; }
+.ctr .st { font-size: 12.5px; text-align: right; }
+.ctr .res { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 6px; font-size: 12px; color: var(--muted); }
+
+pre { background: var(--code-bg); color: var(--code-ink); padding: 12px; border-radius: 10px; overflow: auto; max-height: 60vh; font: 12px/1.5 ui-monospace, "SF Mono", Consolas, monospace; white-space: pre-wrap; word-break: break-word; margin: 8px 0 0; }
+.ask { border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 10px; }
+.ask textarea { width: 100%; box-sizing: border-box; margin-top: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font: inherit; font-size: 14px; resize: vertical; min-height: 84px; }
+@media (pointer: coarse) { select, input, textarea, .ask textarea, .form input { font-size: 16px; } }
+.ask textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.ask blockquote, .fix blockquote { margin: 6px 0 0; padding: 6px 10px; border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: 0 8px 8px 0; white-space: pre-wrap; font-size: 13px; color: var(--ink-2); max-height: 160px; overflow-y: auto; }
+.fix { margin-top: 10px; font-size: 13px; }
+.form { display: grid; gap: 12px; }
+.form label { display: grid; gap: 6px; font-size: 13.5px; font-weight: 600; min-width: 0; }
+.form input { width: 100%; box-sizing: border-box; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; font: inherit; font-size: 15px; font-weight: 400; }
+.summary { white-space: pre-wrap; font-size: 13px; color: var(--ink-2); background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin-top: 8px; max-height: 340px; overflow-y: auto; }
+
+/* Diálogo: folha de baixo no celular */
+dialog { border: 1px solid var(--line); border-radius: 18px; background: var(--bg); color: var(--ink); width: min(980px, calc(100vw - 32px)); max-height: 90vh; padding: 0; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+dialog::backdrop { background: rgba(10,14,20,.5); }
+dialog .head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 1; }
+dialog .head strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+dialog .body { padding: 16px; overflow-x: hidden; overflow-y: auto; max-height: calc(90vh - 62px); }
+@media (max-width: 760px) {
+  dialog { width: 100vw; max-width: 100vw; max-height: 92vh; margin: auto 0 0; border-radius: 18px 18px 0 0; }
+  dialog .body { max-height: calc(92vh - 62px); padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+}
+.facts { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
+.facts > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; min-width: 0; }
+.facts .k { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.facts .v { font-weight: 600; margin-top: 2px; overflow-wrap: anywhere; }
+.h3 { font-size: 14px; font-weight: 700; margin: 20px 0 8px; }
+.spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(90px + env(safe-area-inset-bottom)); background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 12px; font-size: 13.5px; z-index: 50; box-shadow: 0 8px 30px rgba(0,0,0,.25); max-width: calc(100vw - 32px); }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><img src="/icons/icon-192.png" alt=""><div style="min-width:0"><h1>Agentes</h1><div class="repo" id="repo"></div></div></div>
+    <span class="grow"></span>
+    <span class="updated" id="updated"></span>
+    <span id="svc" class="status"></span>
+    <button class="icon-btn" id="bell" title="Avisos no celular" aria-label="Avisos no celular"></button>
+    <button class="icon-btn" id="theme" title="Tema claro/escuro" aria-label="Tema"></button>
+  </div>
+  <nav class="tabs" id="nav"></nav>
+</header>
+<main id="main"><div class="empty">Carregando…</div></main>
+<dialog id="dlg"><div class="head"><strong id="dlgTitle"></strong><span class="grow"></span><button class="btn" id="dlgClose">Fechar</button></div><div class="body" id="dlgBody"></div></dialog>
+
+<script>
+const TABS = [['agora', 'Agora', 'bolt'], ['tarefas', 'Tarefas', 'list'], ['projetos', 'Projetos', 'layers'], ['execucoes', 'Execuções', 'play'], ['salas', 'Salas', 'box'], ['eventos', 'Eventos', 'clock'], ['sistema', 'Sistema', 'cpu']];
+const STATUS = {
+  starting: ['Preparando sala', 'info'], running: ['Agente trabalhando', 'info'], collecting: ['Coletando commits', 'info'],
+  verifying: ['Verificando', 'info'], delivering: ['Abrindo PR', 'info'], ready: ['Aguarda sua aprovação', 'ok'],
+  staged: ['Etapa pronta', 'ok'],
+  done: ['Concluída', 'ok'], retry: ['Vai tentar de novo', 'warn'], blocked: ['Bloqueada', 'bad']
+};
+const FAIL = {
+  interrupted: 'Controlador interrompido na preparação', timeout: 'Tempo limite excedido', lost: 'Supervisor sumiu sem resultado',
+  agent_exit: 'Agente saiu com erro', no_commits: 'Agente não fez commits', history_rewritten: 'Histórico reescrito',
+  revision_incomplete: 'Revisão sem a base atual', verify_failed: 'Verificação falhou', branch_exists: 'Branch já existe',
+  branch_missing: 'Branch do PR sumiu', invalid_branch: 'Nome de branch inválido', delivery_conflict: 'Conflito na entrega',
+  workflow_change: 'Altera .github/workflows', delivery_failed: 'Falha na entrega', infra: 'Falha de infraestrutura',
+  base_conflict: 'Conflito com a main', network: 'Sem conexão com o provedor (não contada)',
+  quota: 'Cota do agente esgotada (não contada)',
+  incomplete: 'Solução incompleta (sem PR)', unfinished: 'Parou antes de concluir (continua sozinha)'
+};
+const EVENT = {
+  started: 'Controlador iniciou', stopped: 'Controlador parou', disabled: 'Controlador desligado (enabled=false)', pilot_mode: 'Modo piloto',
+  task_started: 'Tarefa iniciada', room_started: 'Sala do agente criada', verify_started: 'Verificação iniciada',
+  verify_room_started: 'Sala de verificação criada', task_ready: 'PR pronto: aguarda sua aprovação', task_done: 'Tarefa concluída',
+  task_retry: 'Nova tentativa agendada', task_blocked: 'Tarefa bloqueada', image_rebuild_started: 'Reconstrução de imagens',
+  image_rebuild_done: 'Imagens reconstruídas', image_refresh_failed: 'Falha ao atualizar imagens',
+  base_merged: 'Main incorporada antes da verificação', base_conflict: 'Conflito com a main', task_unblocked: 'Tarefa desbloqueada',
+  task_retry_requested: 'Nova tentativa solicitada pelo painel',
+  breaker_open: 'Disjuntor aberto: falhas rápidas seguidas', starts_paused: 'Salas novas em pausa', starts_resumed: 'Salas novas liberadas',
+  task_incomplete: 'Agente declarou solução incompleta', agent_stopping: 'Agente travado ou sem tempo: encerrando a sala',
+  quota: 'Cota do agente esgotada', cleanup_done: 'Faxina automática concluída', task_dropped: 'Issue fechada ou apagada: tarefa encerrada',
+  cleanup_failed: 'Falha na faxina automática', notify_failed: 'Falha no aviso ao celular',
+  task_unfinished: 'Agente parou antes de concluir: continua dos commits',
+  task_staged: 'Etapa pronta: a próxima começa em cima dela', stage_done: 'Etapa incorporada à main pelo PR final',
+  stack_refresh: 'Etapa atualizada com a nova versão da anterior', feedback_started: 'Ajuste pedido pelo painel: agente voltou à tarefa',
+  feedback_dropped: 'Pedido de ajuste descartado (tarefa já concluída)', stage_check_failed: 'Falha ao conferir etapas na main'
+};
+const ACTIVE = new Set(['starting', 'running', 'collecting', 'verifying', 'delivering']);
+const STEPS = [['starting', 'Sala'], ['running', 'Agente'], ['collecting', 'Coleta'], ['verifying', 'Verificação'], ['delivering', 'PR']];
+const WAIT_TONE = { review: 'ok', stage: 'ok', blocked: 'bad', config: 'bad', retry: 'warn', paused: 'warn' };
+// Eventos que só marcam passos internos; ficam fora da visão "Importantes".
+const MINOR = new Set(['room_started', 'verify_room_started', 'verify_started', 'image_rebuild_started', 'cleanup_done', 'pilot_mode']);
+const ICONS = {
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  play: '<circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/>', box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', cpu: '<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9zM9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+  bell: '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>', alert: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/>', layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  ext: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>', eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'
+};
+const icon = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] ?? ''}</svg>`;
+
+let tab = (() => {
+  const hash = typeof location === 'undefined' ? '' : location.hash.slice(1);
+  if (TABS.some(([k]) => k === hash)) return hash;
+  try { const t = localStorage.getItem('painel.tab'); return TABS.some(([k]) => k === t) ? t : 'agora'; } catch { return 'agora'; }
+})();
+let data = null, roomsData = null, hostData = null, imagesData = null, acessoData = null, live = {}, lastError = null, lastOk = null, stale = false;
+let filterProject = (() => { try { return localStorage.getItem('painel.projeto') ?? ''; } catch { return ''; } })();
+let projectUrl = '', projectId = '', projectIdEdited = false;
+const matchesProject = (item) => !filterProject || item.project === filterProject;
+let filterAgent = '', filterText = '', filterStatus = 'todas', eventsMode = 'importantes', eventsLimit = 120;
+let lastHtml = '', dlgTask = null, pushState = { supported: false, subscribed: false, endpoint: null };
+let drafts = (() => { try { return JSON.parse(localStorage.getItem('painel.ajustes') ?? '{}') ?? {}; } catch { return {}; } })();
+let remembered = (() => { try { return new Set(JSON.parse(localStorage.getItem('painel.abertos') ?? '[]')); } catch { return new Set(); } })();
+function saveDrafts() { try { localStorage.setItem('painel.ajustes', JSON.stringify(drafts)); } catch {} }
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ts = (v) => v == null ? null : typeof v === 'number' ? v : Date.parse(v);
+function dur(ms) {
+  if (ms == null || !isFinite(ms) || ms < 0) return '—';
+  const s = Math.round(ms / 1000);
+  if (s < 60) return `${s} s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} h ${m % 60} min`;
+  return `${Math.floor(h / 24)} d ${h % 24} h`;
+}
+const clock = (v) => { const t = ts(v); return t ? new Date(t).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—'; };
+function when(v) {
+  const t = ts(v); if (!t) return '—';
+  return new Date(t).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+function dayLabel(v) {
+  const d = new Date(ts(v)), today = new Date();
+  const key = (x) => x.toDateString();
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  if (key(d) === key(today)) return 'Hoje';
+  if (key(d) === key(yesterday)) return 'Ontem';
+  return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+}
+// Tempos relativos ficam fora do HTML e são atualizados a cada segundo: o HTML só muda quando os dados mudam,
+// então a tela não é redesenhada à toa (era isso que fazia a rolagem voltar).
+const ago = (v) => { const t = ts(v); return t ? `<span data-t="${t}" data-m="ago"></span>` : '—'; };
+const since = (v) => { const t = ts(v); return t ? `<span data-t="${t}" data-m="since"></span>` : '—'; };
+const until = (v) => { const t = ts(v); return t ? `<span data-t="${t}" data-m="until"></span>` : '—'; };
+function updateTimes(root = document) {
+  const now = Date.now();
+  for (const el of root.querySelectorAll('[data-t]')) {
+    const t = Number(el.dataset.t), m = el.dataset.m;
+    el.textContent = m === 'ago' ? (now - t < 5000 ? 'agora' : `há ${dur(now - t)}`) : m === 'since' ? dur(now - t) : t > now ? `em ${dur(t - now)}` : 'agora';
+  }
+  const age = lastOk ? now - lastOk : Infinity;
+  const u = $('updated');
+  u.textContent = lastError && age > 15000 ? `sem conexão ${lastOk ? `há ${dur(age)}` : ''}` : lastOk ? `atualizado ${age < 5000 ? 'agora' : `há ${dur(age)}`}` : '';
+  u.className = `updated ${lastError && age > 15000 ? 's-bad' : ''}`;
+}
+function bytes(n) { if (!n) return '—'; const u = ['B', 'KB', 'MB', 'GB', 'TB']; let i = 0; while (n >= 1024 && i < 4) { n /= 1024; i++; } return `${n.toFixed(i ? 1 : 0)} ${u[i]}`; }
+function statusPill(s) { const [label, tone] = STATUS[s] ?? [s, 'idle']; return `<span class="pill ${tone}${ACTIVE.has(s) ? ' pulse' : ''}"><span class="dot"></span>${esc(label)}</span>`; }
+function agentTag(a, account) { if (String(a).includes('+')) return '<span class="agent">Codex ou Claude</span>'; const n = account && account.startsWith(`${a}-`) ? ` ${account.slice(a.length + 1)}` : ''; return `<span class="agent agent-${esc(a)}">${esc((a === 'claude' ? 'Claude' : a === 'codex' ? 'Codex' : a) + n)}</span>`; }
+const keyOf = (t) => t.project ? `${t.project}:${t.issue}` : String(t.issue);
+const projectChip = (t) => t.project ? `<span class="pill plain">${esc(t.project)}</span>` : '';
+const repoOf = (project) => { const p = data.projects?.find((p) => p.id === project); return p ? `${p.owner}/${p.repo}` : data.repo; };
+function prLink(n, project) { return n ? `<a href="https://github.com/${esc(repoOf(project))}/pull/${n}" target="_blank" rel="noopener">PR #${n}</a>` : '—'; }
+function issueLink(n, project) { return `<a href="https://github.com/${esc(repoOf(project))}/issues/${n}" target="_blank" rel="noopener">#${n}</a>`; }
+const taskOf = (n, project) => {
+  if (String(n).includes(':')) { const parts = String(n).split(':'); project = parts[0]; n = Number(parts[1]); }
+  return data.tasks.find((t) => t.issue === Number(n) && (!project || t.project === project));
+};
+function bars(rows, { color = 'var(--accent)', fmt = (v) => v, max } = {}) {
+  if (!rows.length) return '<div class="sub">Sem dados ainda</div>';
+  const top = max ?? Math.max(...rows.map((r) => r.value), 1);
+  return `<div class="bars">${rows.map((r) => `<div class="row"><span class="label" title="${esc(r.label)}">${r.html ?? esc(r.label)}</span><span class="track"><span class="fill" style="width:${Math.max(2, 100 * r.value / top)}%;background:${r.color ?? color}"></span></span><span class="val">${esc(fmt(r.value))}</span></div>`).join('')}</div>`;
+}
+const head = (title, n, extra = '') => `<div class="section-head"><h2>${title}</h2>${n == null ? '' : `<span class="n">${n}</span>`}<span class="grow"></span>${extra}</div>`;
+const avg = (xs) => { const v = xs.filter((x) => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+
+async function get(path) {
+  const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 12000);
+  try {
+    const r = await fetch(path, { cache: 'no-store', signal: ctl.signal });
+    if (!r.ok) throw new Error(`${path}: ${r.status}`);
+    return await r.json();
+  } finally { clearTimeout(timer); }
+}
+async function post(path, body) {
+  const r = await fetch(path, { method: 'POST', cache: 'no-store', headers: { 'content-type': 'application/json', 'x-painel': '1' }, body: JSON.stringify(body) });
+  const out = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(out.error ?? `erro ${r.status}`);
+  return out;
+}
+
+// Última visão geral guardada no aparelho: ao abrir, o painel aparece na hora com ela (com a idade real em
+// "atualizado há…") e a consulta nova roda em segundo plano.
+const SNAPSHOT = 'painel.ultimo';
+let snapshotAt = 0;
+function saveSnapshot() {
+  if (Date.now() - snapshotAt < 30000) return;
+  snapshotAt = Date.now();
+  try { localStorage.setItem(SNAPSHOT, JSON.stringify({ at: lastOk, data })); } catch {}
+}
+function loadSnapshot() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SNAPSHOT) ?? 'null');
+    if (!saved?.data?.controller || Date.now() - saved.at > 7 * 86_400_000) return;
+    data = saved.data; lastOk = saved.at; stale = true;
+  } catch {}
+}
+
+let refreshing = false;
+async function refresh(full = false) {
+  if (refreshing) return;
+  refreshing = true;
+  try {
+    data = await get('/api/overview');
+    const jobs = [];
+    if (full || tab === 'salas') jobs.push(get('/api/rooms').then((v) => { roomsData = v; }));
+    if (full || tab === 'sistema') {
+      jobs.push(get('/api/host').then((v) => { hostData = v; }));
+      jobs.push(get('/api/images').then((v) => { imagesData = v; }));
+      if (!acessoData) jobs.push(get('/api/acesso').then((v) => { acessoData = v; }).catch(() => {}));
+    }
+    const active = data.tasks.filter((t) => ACTIVE.has(t.status));
+    if (tab === 'agora' || dlgTask) {
+      for (const t of active) jobs.push(get(`/api/live?issue=${t.issue}&project=${encodeURIComponent(t.project)}`).then((v) => { live[keyOf(t)] = v; }).catch(() => {}));
+    }
+    for (const k of Object.keys(live)) if (!active.some((t) => keyOf(t) === k)) delete live[k];
+    await Promise.all(jobs);
+    lastError = null; lastOk = Date.now(); stale = false;
+    saveSnapshot();
+  } catch (e) { lastError = e.message; }
+  finally { refreshing = false; }
+  render();
+}
+
+function renderHeader() {
+  $('repo').textContent = data?.repo ?? '';
+  const c = data?.controller;
+  let tone = 'bad', label = 'Parado', long = 'Controlador';
+  if (c) {
+    const tickAge = c.lastTick ? Date.now() - ts(c.lastTick.time) : Infinity;
+    if (c.service === 'active' && c.alive && tickAge < (c.pollSeconds * 3 + 30) * 1000) { tone = 'ok'; label = 'Ativo'; }
+    else if (c.service === 'active') { tone = 'warn'; label = 'Sem ciclo recente'; }
+    else if (!c.enabled) { tone = 'idle'; label = 'Desligado'; }
+    if (data.projects?.length === 0) { tone = 'idle'; label = 'Sem projetos'; }
+  }
+  $('svc').className = `status pill ${tone}`;
+  $('svc').innerHTML = `<span class="dot"></span><span class="label-long">${long}&nbsp;</span>${label}`;
+  const counts = data ? {
+    agora: data.tasks.filter((t) => ACTIVE.has(t.status) || t.status === 'ready').length,
+    tarefas: data.tasks.filter((t) => t.status === 'blocked').length
+  } : {};
+  const nav = TABS.map(([k, l, ic]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${icon(ic)}<span>${l}</span>${counts[k] ? `<span class="count">${counts[k]}</span>` : ''}</button>`).join('');
+  if ($('nav').innerHTML !== nav) $('nav').innerHTML = nav;
+  $('bell').innerHTML = icon('bell') + (pushState.subscribed ? '<span class="badge-dot"></span>' : '');
+}
+
+// ---------- Agora ----------
+function phaseSince(t) {
+  const ev = [...data.events].reverse().find((e) => e.issue === t.issue && e.project === t.project);
+  const candidates = [ts(ev?.time), ts(t.status === 'verifying' ? t.verifyStartedAt : t.runStartedAt)].filter(Boolean);
+  return candidates.length ? Math.max(...candidates) : ts(t.startedAt);
+}
+function steps(status) {
+  const idx = status === 'ready' || status === 'staged' || status === 'done' ? STEPS.length : STEPS.findIndex(([s]) => s === status);
+  return `<div class="steps">${STEPS.map(([, label], i) => `<span class="step ${i < idx ? 'done' : i === idx ? 'on' : ''}"><i></i>${label}</span>`).join('')}</div>`;
+}
+const KIND = { text: 'disse', thinking: 'pensou', tool: 'executou', error: 'erro' };
+function liveBlock(t) {
+  const l = live[keyOf(t)];
+  if (!l) return '<div class="sub" style="margin-top:10px"><span class="spinner"></span> lendo a atividade do agente…</div>';
+  if (l.phase === 'verificacao') {
+    return `<div class="now"><div class="doing"><div class="lbl">Verificação em sala limpa</div><p>${esc((l.lines ?? []).slice(-8).join('\n') || 'preparando…')}</p></div></div>`;
+  }
+  const parts = [];
+  if (l.saying) parts.push(`<div class="say"><div class="lbl">Falando · ${clock(l.saying.at)}</div><p class="clamp4">${esc(l.saying.text)}</p></div>`);
+  if (l.thinking) parts.push(`<div class="think"><div class="lbl">Pensando · ${clock(l.thinking.at)}</div><p class="clamp4">${esc(l.thinking.text)}</p></div>`);
+  if (l.doing) parts.push(`<div class="doing"><div class="lbl">Executando · ${clock(l.doing.at)}</div><p class="clamp4">${esc(l.doing.text)}</p></div>`);
+  if (!parts.length && l.lines?.length) parts.push(`<div class="doing"><div class="lbl">Saída do agente</div><p>${esc(l.lines.slice(-8).join('\n'))}</p></div>`);
+  if (!parts.length) parts.push('<div class="sub">O agente ainda não registrou nenhuma ação.</div>');
+  const feed = (l.items ?? []).slice().reverse().map((i) => `<li><span class="tm">${clock(i.at)}</span><span class="tx k-${i.kind}"><b>${KIND[i.kind] ?? i.kind}:</b> ${esc(i.text)}</span></li>`).join('');
+  return `<div class="now">${parts.join('')}</div>
+    <div class="meta"><span>${l.steps ?? 0} ações</span>${l.lastAt ? `<span>última atividade ${ago(l.lastAt)}</span>` : ''}</div>
+    ${feed ? `<details data-key="feed-${keyOf(t)}"><summary>Atividade completa (${l.items.length} mais recentes)</summary><ol class="feed">${feed}</ol></details>` : ''}`;
+}
+function liveCard(t) {
+  return `<article class="card tone-info">
+    <div class="card-head"><span class="issue-no">${issueLink(t.issue, t.project)}</span>${projectChip(t)}${agentTag(t.agent, t.account)}${stagePill(t)}${t.feedback ? '<span class="pill plain">ajuste</span>' : t.revision ? '<span class="pill plain">revisão</span>' : ''}<span class="grow"></span>${statusPill(t.status)}</div>
+    <h3 class="click" data-task="${keyOf(t)}" style="cursor:pointer">${esc(t.title)}</h3>
+    ${steps(t.status)}
+    ${t.feedback ? `<div class="fix"><b>Aplicando seu ajuste</b> <span class="sub">pedido ${ago(t.feedback.at)}</span><blockquote>${esc(t.feedback.text)}</blockquote></div>` : ''}
+    <div class="meta"><span>nesta fase <b>${since(phaseSince(t))}</b></span><span>total <b>${since(t.startedAt)}</b></span><span>execução ${t.runSeq ?? 1}${t.attempts ? ` · ${t.attempts} falha(s) antes` : ''}${t.continuations ? ` · continuação ${t.continuations}` : ''}</span></div>
+    ${liveBlock(t)}
+  </article>`;
+}
+function previewBlock(t) {
+  if (!t.previewable) return '';
+  const p = data.preview;
+  const mine = p && p.issue === t.issue && p.project === t.project;
+  if (mine && p.state === 'preparando') return `<div class="actions"><button class="btn" disabled><span class="spinner"></span> Preparando a prévia (${since(p.at)})</button><button class="btn" data-preview="parar" data-project="${esc(t.project ?? '')}">Cancelar</button></div><div class="sub" style="margin-top:6px">Leva uns 2 a 4 minutos: sobe o banco de teste e o app desse PR.</div>`;
+  if (mine && p.state === 'pronta') return `<div class="actions"><a class="btn primary" href="${esc(p.url)}" target="_blank" rel="noopener">${icon('eye')} Abrir prévia</a><button class="btn" data-preview="parar" data-project="${esc(t.project ?? '')}">Desligar prévia</button></div>
+    <div class="sub" style="margin-top:6px">Banco descartável com dados falsos. ${esc(t.previewLogins ?? '')}</div>`;
+  const note = mine && (p.state === 'erro' || p.state === 'caiu') ? `<div class="sub s-bad" style="margin-top:6px">${p.state === 'caiu' ? 'A prévia caiu (o PC ou o Docker reiniciou).' : `A prévia falhou${p.detail ? `: ${esc(p.detail)}` : ''}.`}</div>` : '';
+  const other = p && !mine && (p.state === 'pronta' || p.state === 'preparando') ? ` <span class="sub">(substitui a prévia da #${p.issue})</span>` : '';
+  return `<div class="actions"><button class="btn" data-preview="abrir" data-issue="${t.issue}" data-project="${esc(t.project ?? '')}">${icon('eye')} ${mine ? 'Tentar a prévia de novo' : 'Abrir prévia'}</button>${other}</div>${note}`;
+}
+// Etapa N de uma tarefa dividida ("depende de #N"): conta as etapas anteriores que ela carrega.
+function stagePill(t) {
+  return t.stack?.length || t.status === 'staged' || t.nextStages?.length ? `<span class="pill plain">${icon('layers')} etapa ${(t.stack?.length ?? 0) + 1}</span>` : '';
+}
+const issueList = (numbers, project) => numbers.map((n) => issueLink(n, project)).join(', ');
+// "Faltou isso" / "isso está errado": o mesmo agente volta na mesma branch e parte do que já fez.
+function feedbackBlock(t) {
+  const pending = t.pendingFeedback ?? [];
+  if (pending.length) {
+    return `<div class="ask"><div style="font-size:13.5px;font-weight:600">${icon('chat')} Ajuste enviado ${ago(pending.at(-1).at)}</div>
+      <div class="sub">O agente começa no próximo ciclo (até 1 min), assim que houver sala livre. Você recebe um aviso quando ficar pronto.</div>
+      ${pending.map((p) => `<blockquote>${esc(p.text)}</blockquote>`).join('')}
+      <div class="actions"><button class="btn" data-ajuste="cancelar" data-issue="${t.issue}" data-project="${esc(t.project ?? '')}">Cancelar pedido</button></div></div>`;
+  }
+  return `<details class="ask" data-key="aj-${keyOf(t)}"><summary>${icon('chat')} Pedir ajuste ao agente</summary>
+    <div class="sub" style="margin-top:6px">Diga o que está errado ou o que faltou. O agente parte do que já fez, aplica só o ajuste e passa de novo pela verificação. A prévia é desligada e um aviso chega quando terminar.</div>
+    <textarea id="aj-${keyOf(t)}" data-draft="${keyOf(t)}" rows="4" maxlength="4000" placeholder="Ex.: faltou o filtro por mês na lista de pagamentos; no celular o botão Exportar fica escondido."></textarea>
+    <div class="actions"><button class="btn primary" data-ajuste="enviar" data-issue="${t.issue}" data-project="${esc(t.project ?? '')}">Enviar ao agente</button></div></details>`;
+}
+function reviewCard(t) {
+  return `<article class="card tone-ok">
+    <div class="card-head"><span class="issue-no">${issueLink(t.issue, t.project)}</span>${projectChip(t)}${agentTag(t.agent, t.account)}${stagePill(t)}<span class="grow"></span>${statusPill(t.status)}</div>
+    <h3 class="click" data-task="${keyOf(t)}" style="cursor:pointer">${esc(t.title)}</h3>
+    <div class="meta"><span>pronto ${ago(t.readyAt)}</span><span>levou <b>${t.readyAt ? dur(ts(t.readyAt) - ts(t.startedAt)) : '—'}</b></span>${t.uncommittedFiles?.length ? `<span class="s-warn">${t.uncommittedFiles.length} arquivo(s) não commitado(s)</span>` : ''}</div>
+    ${t.stack?.length ? `<div class="sub" style="margin-top:6px">Inclui as etapas ${issueList(t.stack, t.project)}: aprovar este PR conclui todas.</div>` : ''}
+    ${t.agentSummary ? `<details data-key="sum-${keyOf(t)}"><summary>O que o agente fez</summary><div class="summary">${esc(t.agentSummary.slice(0, 4000))}</div></details>` : ''}
+    <div class="actions"><a class="btn primary" href="https://github.com/${esc(repoOf(t.project))}/pull/${t.prNumber}" target="_blank" rel="noopener">${icon('ext')} Revisar PR #${t.prNumber} no GitHub</a></div>
+    ${previewBlock(t)}
+    ${feedbackBlock(t)}
+  </article>`;
+}
+function stageCard(t) {
+  return `<article class="card tone-ok">
+    <div class="card-head"><span class="issue-no">${issueLink(t.issue, t.project)}</span>${projectChip(t)}${agentTag(t.agent, t.account)}${stagePill(t)}<span class="grow"></span>${statusPill(t.status)}</div>
+    <h3 class="click" data-task="${keyOf(t)}" style="cursor:pointer">${esc(t.title)}</h3>
+    <div class="meta"><span>pronta ${ago(t.stagedAt ?? t.readyAt)}</span>${t.nextStages?.length ? `<span>segue para ${issueList(t.nextStages, t.project)}</span>` : ''}</div>
+    <div class="sub" style="margin-top:6px">Verificada em sala limpa. Não tem PR próprio: entra no PR da última etapa, que é o único que você aprova.</div>
+    ${t.agentSummary ? `<details data-key="sum-${keyOf(t)}"><summary>O que o agente fez</summary><div class="summary">${esc(t.agentSummary.slice(0, 4000))}</div></details>` : ''}
+    ${previewBlock(t)}
+    ${feedbackBlock(t)}
+  </article>`;
+}
+function retryAction(t) {
+  if (t?.status !== 'retry') return '';
+  return `<div class="actions"><button class="btn primary" data-retry data-issue="${t.issue}" data-project="${esc(t.project)}" ${t.retryPending ? 'disabled' : ''}>${t.retryPending ? 'Nova tentativa solicitada' : 'Tentar novamente'}</button><span class="sub">${t.retryPending ? 'Aguardando o próximo ciclo (até 1 min).' : 'Libera a espera e verifica o ambiente novamente.'}</span></div>`;
+}
+function problemCard(t) {
+  const e = t.lastError;
+  const tone = t.status === 'blocked' ? 'bad' : 'warn';
+  return `<article class="card tone-${tone} click" data-task="${keyOf(t)}">
+    <div class="card-head"><span class="issue-no">${issueLink(t.issue, t.project)}</span>${projectChip(t)}${agentTag(t.agent, t.account)}<span class="grow"></span>${statusPill(t.status)}</div>
+    <h3>${esc(t.title)}</h3>
+    ${e ? `<div class="s-${tone}" style="font-weight:600;font-size:13.5px">${esc(FAIL[e.category] ?? e.category)}</div><div class="sub clamp4 mono" style="margin-top:4px">${esc(e.detail)}</div>` : ''}
+    <div class="meta">${e ? `<span>${ago(e.at)}</span>` : ''}${t.status === 'retry' && t.nextAttemptAt ? `<span>próxima tentativa <b>${until(t.nextAttemptAt)}</b></span>` : ''}${t.status === 'blocked' ? '<span>tire a etiqueta <b>bloqueado</b> da issue para reabrir</span>' : ''}<span>${t.attempts ?? 0} falha(s)</span></div>
+    ${retryAction(t)}
+  </article>`;
+}
+function queueCard(q) {
+  return `<article class="card">
+    <div class="card-head"><span class="issue-no">${q.issue ? issueLink(q.issue, q.project) : 'Projeto'}</span>${projectChip(q)}${q.agent ? agentTag(q.agent) : ''}</div>
+    <h3>${esc(q.title ?? 'Precisa de configuração')}</h3>
+    <div class="s-${WAIT_TONE[q.kind] ?? 'idle'}" style="font-size:13px;font-weight:600">${esc(q.reason)}${q.at ? ` · ${until(q.at)}` : ''}</div>
+    ${retryAction(data.tasks.find((t) => t.issue === q.issue && t.project === q.project))}
+    ${(q.warnings ?? []).length ? `<details class="warns" data-key="av-${keyOf(q)}" data-remember><summary class="s-warn">⚠ ${q.warnings.length} aviso(s)</summary>${q.warnings.map((w) => `<div class="sub s-warn">${esc(w)}</div>`).join('')}</details>` : ''}
+  </article>`;
+}
+// Cada conta dos agentes: livre, com salas abertas ou com a cota esgotada (e quando volta).
+function accountsRow() {
+  const list = data.controller.accounts ?? [];
+  if (!list.length) return '';
+  const name = (a) => {
+    const n = a.account.startsWith(`${a.agent}-`) ? a.account.slice(a.agent.length + 1) : list.filter((x) => x.agent === a.agent).length > 1 ? '1' : '';
+    return (a.agent === 'claude' ? 'Claude' : a.agent === 'codex' ? 'Codex' : a.agent) + (n ? ` ${n}` : '');
+  };
+  return `<div class="toolbar chips accounts" aria-label="Contas dos agentes">${list.map((a) => {
+    const [tone, text] = a.quotaUntil ? ['s-bad', `cota esgotada até ${when(a.quotaUntil)}`] : a.rooms ? ['s-info', `${a.rooms} sala(s)`] : ['s-ok', 'livre'];
+    return `<span class="chip"><span class="agent agent-${esc(a.agent)}">${esc(name(a))}</span><span class="${tone}">${esc(text)}</span></span>`;
+  }).join('')}</div>`;
+}
+
+function viewAgora() {
+  const c = data.controller, tasks = data.tasks.filter(matchesProject);
+  const active = tasks.filter((t) => ACTIVE.has(t.status));
+  const review = tasks.filter((t) => t.status === 'ready');
+  const staged = tasks.filter((t) => t.status === 'staged');
+  const problems = tasks.filter((t) => t.status === 'retry' || t.status === 'blocked');
+  const waiting = (c.queue ?? []).filter(matchesProject).filter((q) => q.kind !== 'review' && q.kind !== 'stage' && !tasks.some((t) => t.issue === q.issue && t.project === q.project && (ACTIVE.has(t.status) || t.status === 'ready' || t.status === 'staged')));
+  const warnings = Object.entries(c.issueWarnings ?? {}).filter(([key, texts]) => texts.length && (!filterProject || key.startsWith(`${filterProject}:`)));
+  const blocked = problems.filter((t) => t.status === 'blocked').length;
+  const recent = data.events.filter(matchesProject).filter((e) => !MINOR.has(e.event)).slice(-6).reverse();
+  return `
+  <div class="kpis section">
+    <div class="kpi"><div class="k">Rodando</div><div class="v">${active.length}<small> / ${c.maxConcurrency}</small></div><div class="h">vagas em uso</div></div>
+    <div class="kpi"><div class="k">Aguardando você</div><div class="v ${review.length ? 's-ok' : ''}">${review.length}</div><div class="h">PR(s) para aprovar</div></div>
+    <div class="kpi"><div class="k">Na fila</div><div class="v">${waiting.length}</div><div class="h">${c.queueAt ? `conferido ${ago(c.queueAt)}` : 'aguardando ciclo'}</div></div>
+    <div class="kpi"><div class="k">Com problema</div><div class="v ${blocked ? 's-bad' : problems.length ? 's-warn' : ''}">${problems.length}</div><div class="h">${blocked} bloqueada(s)</div></div>
+  </div>
+  ${accountsRow()}
+  ${warnings.length ? `<details class="fold" data-key="avisos" data-remember><summary class="section-head"><h2>Avisos das issues</h2><span class="n">${warnings.length}</span><span class="grow"></span><span class="hint">toque para abrir ou fechar</span></summary><div class="list">${warnings.map(([issue, texts]) => `<div class="item"><span class="dot s-warn"></span><div class="body"><div class="title">${issueLink(Number(String(issue).split(':').at(-1)), String(issue).includes(':') ? String(issue).split(':')[0] : undefined)} ${esc(taskOf(issue)?.title ?? '')}</div><div class="sub">${texts.map(esc).join(' · ')}</div></div></div>`).join('')}</div></details>` : ''}
+  <div class="section">${head('Rodando agora', active.length)}
+    ${active.length ? `<div class="cards wide">${active.map(liveCard).join('')}</div>` : `<div class="empty">Nenhum agente trabalhando agora.${waiting.length ? ' Veja abaixo por que as issues da fila ainda não começaram.' : ' Crie uma issue com a etiqueta <b>codex</b> ou <b>claude</b>.'}</div>`}
+  </div>
+  ${review.length ? `<div class="section">${head('Aguardando sua aprovação', review.length)}<div class="cards">${review.map(reviewCard).join('')}</div></div>` : ''}
+  ${staged.length ? `<div class="section">${head('Etapas prontas (seguem sozinhas)', staged.length)}<div class="cards">${staged.map(stageCard).join('')}</div></div>` : ''}
+  ${problems.length ? `<div class="section">${head('Com problema', problems.length)}<div class="cards">${problems.map(problemCard).join('')}</div></div>` : ''}
+  ${waiting.length ? `<div class="section">${head('Na fila', waiting.length)}<div class="cards small">${waiting.map(queueCard).join('')}</div></div>` : ''}
+  <div class="section">${head('Últimos acontecimentos', null, '<a href="#" data-tab="eventos">ver todos</a>')}${eventsList(recent, false)}</div>`;
+}
+
+// ---------- Tarefas ----------
+const TASK_FILTERS = [['todas', 'Todas', () => true], ['ativas', 'Rodando', (t) => ACTIVE.has(t.status)], ['revisao', 'Para aprovar', (t) => t.status === 'ready'],
+  ['problemas', 'Com problema', (t) => t.status === 'retry' || t.status === 'blocked'], ['concluidas', 'Concluídas', (t) => t.status === 'done']];
+function toolbar(withStatus) {
+  return `<div class="toolbar">
+    ${withStatus ? `<div class="chips">${TASK_FILTERS.map(([k, l, f]) => `<button class="chip ${k === filterStatus ? 'on' : ''}" data-filter="${k}">${l} <span class="sub">${data.tasks.filter(f).length}</span></button>`).join('')}</div>` : ''}
+    <select id="fAgent"><option value="">Todos os agentes</option>${data.controller.agents.map((a) => `<option value="${esc(a)}" ${a === filterAgent ? 'selected' : ''}>${esc(a)}</option>`).join('')}</select>
+    <input type="search" id="fText" placeholder="Buscar por número, título ou área" value="${esc(filterText)}">
+  </div>`;
+}
+function taskCard(t) {
+  const tone = { blocked: 'bad', retry: 'warn', ready: 'ok', staged: 'ok' }[t.status] ?? (ACTIVE.has(t.status) ? 'info' : '');
+  return `<article class="card click ${tone ? `tone-${tone}` : ''}" data-task="${keyOf(t)}">
+    <div class="card-head"><span class="issue-no">#${t.issue}</span>${projectChip(t)}${agentTag(t.agent, t.account)}${stagePill(t)}${t.revision ? '<span class="pill plain">revisão</span>' : ''}<span class="grow"></span>${statusPill(t.status)}</div>
+    <h3 class="clamp2">${esc(t.title)}</h3>
+    ${(t.areas ?? []).length ? `<div class="chips">${t.areas.map((a) => `<span class="pill plain">${esc(a)}</span>`).join('')}</div>` : ''}
+    <div class="meta"><span>início ${when(t.startedAt)}</span>${t.readyAt ? `<span>até o PR <b>${dur(ts(t.readyAt) - ts(t.startedAt))}</b></span>` : ACTIVE.has(t.status) ? `<span>rodando há <b>${since(t.startedAt)}</b></span>` : ''}<span>execução ${t.runSeq ?? 0}</span>${t.prNumber ? `<span>${prLink(t.prNumber, t.project)}</span>` : ''}</div>
+    ${t.lastError && (t.status === 'retry' || t.status === 'blocked') ? `<div class="sub s-${tone}" style="margin-top:6px;font-weight:600">${esc(FAIL[t.lastError.category] ?? t.lastError.category)}</div>` : ''}
+    ${retryAction(t)}
+  </article>`;
+}
+function viewTarefas() {
+  let tasks = data.tasks.filter(matchesProject).filter(TASK_FILTERS.find(([k]) => k === filterStatus)?.[2] ?? (() => true));
+  if (filterAgent) tasks = tasks.filter((t) => t.agent === filterAgent);
+  if (filterText) { const q = filterText.toLowerCase(); tasks = tasks.filter((t) => `#${t.issue} ${t.issue} ${t.title} ${t.areas?.join(' ')}`.toLowerCase().includes(q)); }
+  // Rodando e com problema primeiro; depois as mais novas.
+  const rank = (t) => ACTIVE.has(t.status) ? 0 : t.status === 'ready' || t.status === 'staged' ? 1 : t.status === 'blocked' || t.status === 'retry' ? 2 : 3;
+  tasks = tasks.slice().sort((a, b) => rank(a) - rank(b) || (ts(b.startedAt) ?? 0) - (ts(a.startedAt) ?? 0));
+  return `${toolbar(true)}${tasks.length ? `<div class="cards">${tasks.map(taskCard).join('')}</div>` : '<div class="empty">Nenhuma tarefa com esse filtro.</div>'}`;
+}
+
+// ---------- Execuções ----------
+function runDurations(run) {
+  const a = run.phases.agente, v = run.phases.verificacao;
+  return {
+    start: a?.started ?? v?.started ?? null,
+    agent: a && a.started && a.ended ? a.ended - a.started : null,
+    verify: v && v.started && v.ended ? v.ended - v.started : null,
+    agentOk: a ? a.exitCode === 0 : null,
+    verifyOk: v ? v.result === 'ok' || (v.result == null && v.exitCode === 0) : null,
+    running: Boolean((a && !a.ended) || (v && !v.ended))
+  };
+}
+function runResult(r, d) {
+  // Uma execução "aberta" de uma tarefa que já não está ativa foi interrompida (reinício, sala derrubada).
+  const task = taskOf(r.issue, r.project);
+  const current = task && task.runSeq === r.seq && ACTIVE.has(task.status);
+  if (d.running && current) return '<span class="pill info pulse"><span class="dot"></span>em andamento</span>';
+  if (d.running) return '<span class="pill warn"><span class="dot"></span>interrompida</span>';
+  if (d.verifyOk === true) return '<span class="pill ok"><span class="dot"></span>verificada</span>';
+  if (d.verifyOk === false) return '<span class="pill bad"><span class="dot"></span>verificação falhou</span>';
+  if (d.agentOk === false) return '<span class="pill bad"><span class="dot"></span>agente falhou</span>';
+  if (r.phases.coleta && !r.phases.coleta.produced && !r.phases.verificacao) return '<span class="pill warn"><span class="dot"></span>sem commits</span>';
+  return '<span class="pill">sem resultado</span>';
+}
+function runTimeline(r) {
+  const a = r.phases.agente, v = r.phases.verificacao;
+  const start = a?.started ?? v?.started; if (!start) return '';
+  const end = Math.max(v?.ended ?? 0, a?.ended ?? 0, (a && !a.ended) || (v && !v.ended) ? Date.now() : 0);
+  const total = Math.max(1, end - start);
+  const pct = (x) => Math.min(100, Math.max(0, Number.isFinite(x) ? x : 0));
+  const seg = (p, color) => {
+    if (!p || !p.started) return '';
+    const left = pct(100 * (p.started - start) / total);
+    return `<span style="left:${left}%;width:${Math.min(100 - left, Math.max(1.5, pct(100 * ((p.ended ?? Date.now()) - p.started) / total)))}%;background:${color}"></span>`;
+  };
+  return `<div class="timeline">${seg(a, 'var(--accent)')}${seg(v, 'var(--ok)')}</div>`;
+}
+function fileButtons(r) {
+  const out = [];
+  if (r.phases.agente?.files.includes('prompt.txt')) out.push(['agente', 'prompt', 'Prompt']);
+  if (r.phases.agente?.files.includes('output.sanitized.log')) out.push(['agente', 'log', 'Resposta do agente']);
+  if (r.phases.coleta?.files.includes('status.txt')) out.push(['coleta', 'status', 'Pendências']);
+  if (r.phases.verificacao?.files.includes('output.sanitized.log')) out.push(['verificacao', 'log', 'Log da verificação']);
+  return out.length ? `<div class="actions">${out.map(([p, k, l]) => `<button class="btn" data-file="${esc(r.id)}/${p}" data-kind="${k}">${l}</button>`).join('')}</div>` : '';
+}
+function runCard(r) {
+  const d = runDurations(r), task = taskOf(r.issue, r.project);
+  return `<article class="card">
+    <div class="card-head"><span class="issue-no">#${r.issue} · execução ${r.seq}</span>${projectChip(r)}${agentTag(r.agent)}<span class="grow"></span>${runResult(r, d)}</div>
+    <h3 class="clamp2 click" data-task="${keyOf(r)}" style="cursor:pointer">${esc(task?.title ?? `Issue #${r.issue}`)}</h3>
+    ${runTimeline(r)}
+    <div class="legend"><span><span class="dot" style="color:var(--accent)"></span>agente <b>${d.agent != null ? dur(d.agent) : d.running && r.phases.agente && !r.phases.agente.ended ? since(r.phases.agente.started) : '—'}</b></span><span><span class="dot" style="color:var(--ok)"></span>verificação <b>${d.verify != null ? dur(d.verify) : r.phases.verificacao && !r.phases.verificacao.ended ? since(r.phases.verificacao.started) : '—'}</b></span></div>
+    <div class="meta"><span>começou ${when(d.start)} (${ago(d.start)})</span></div>
+    ${fileButtons(r)}
+  </article>`;
+}
+function viewExecucoes() {
+  let runs = data.runs.slice();
+  if (filterAgent) runs = runs.filter((r) => r.agent === filterAgent);
+  if (filterText) { const q = filterText.replace('#', '').toLowerCase(); runs = runs.filter((r) => `${r.issue} ${taskOf(r.issue, r.project)?.title ?? ''}`.toLowerCase().includes(q)); }
+  // Mais recente primeiro, pela hora em que a execução começou (não pelo número da issue).
+  runs.sort((a, b) => (runDurations(b).start ?? 0) - (runDurations(a).start ?? 0));
+  return `${toolbar(false)}${runs.length ? `<div class="cards">${runs.map(runCard).join('')}</div>` : '<div class="empty">Nenhuma execução registrada.</div>'}`;
+}
+
+// ---------- Salas ----------
+const UNITS = { second: 's', minute: 'min', hour: 'h', day: 'dia', week: 'semana', month: 'mês' };
+function enTime(s) {
+  return s.replace(/^About an? (hour|minute)$/i, (_, u) => `cerca de 1 ${u === 'hour' ? 'hora' : 'minuto'}`)
+    .replace(/^Less than a second$/i, 'menos de 1 s').replace(/^an? (\w+)$/i, '1 $1')
+    .replace(/(\d+)\s+(second|minute|hour|day|week|month)s?/i, (_, n, u) => `${n} ${UNITS[u.toLowerCase()]}${n > 1 && ['dia', 'semana'].includes(UNITS[u.toLowerCase()]) ? 's' : ''}`)
+    .replace(/\b1 (second|minute|hour|day|week|month)\b/i, (_, u) => `1 ${UNITS[u.toLowerCase()]}`);
+}
+function dockerStatus(c) {
+  let m = /^Up (.+?)(?: \((healthy|unhealthy|health: starting)\))?$/.exec(c.status ?? '');
+  if (m) return ['ok', `ligado há ${enTime(m[1])}`];
+  m = /^Exited \((\d+)\) (.+) ago$/.exec(c.status ?? '');
+  if (m) return ['bad', `desligado há ${enTime(m[2])}`];
+  if (/^Created/.test(c.status ?? '')) return ['warn', 'criado, não iniciou'];
+  return [c.state === 'running' ? 'ok' : 'warn', c.status ?? c.state];
+}
+const ROLE = { agent: ['Agente', 'onde o CLI roda e mexe no código'], dind: ['Docker interno', 'Mongo e serviços de teste da sala'], proxy: ['Proxy', 'internet só para sites liberados'] };
+function roomInfo(room) {
+  const m = /^lab-([a-z0-9]+)-(.+)$/.exec(room ?? '');
+  if (!m) return { title: room ?? 'Sem sala', kind: 'outra' };
+  const [, agent, rawId] = m;
+  const split = /^([a-z][a-z0-9]{1,11})-((?:issue|verify)-\d+|previa)$/.exec(rawId);
+  const project = split?.[1], id = split?.[2] ?? rawId;
+  let r = /^issue-(\d+)$/.exec(id);
+  if (r) return { agent, project, issue: Number(r[1]), kind: 'trabalho', title: `Sala de trabalho · #${r[1]}`, desc: `O ${agent} implementa a issue aqui, com credenciais do CLI.` };
+  r = /^verify-(\d+)$/.exec(id);
+  if (r) return { agent, project, issue: Number(r[1]), kind: 'verificacao', title: `Sala de verificação · #${r[1]}`, desc: 'Roda os testes do PR numa sala limpa, sem credenciais.' };
+  if (id === 'previa') return { agent, project, issue: data.preview?.issue, kind: 'previa', title: `Prévia de PR${data.preview?.issue ? ` · #${data.preview.issue}` : ''}`, desc: 'App do PR com banco descartável, para testar no celular.' };
+  return { agent, kind: 'outra', title: id, desc: '' };
+}
+function viewSalas() {
+  if (!roomsData) return '<div class="empty">Carregando salas…</div>';
+  if (roomsData.error) return `<div class="alert bad">${icon('alert')}<div>${esc(roomsData.error)}. Abra o Docker Desktop.</div></div>`;
+  const cs = roomsData.containers ?? [];
+  if (!cs.length) return '<div class="empty">Nenhuma sala existe agora. Elas são criadas para cada tarefa e destruídas ao final.</div>';
+  const rooms = {};
+  for (const c of cs) (rooms[c.room ?? 'sem sala'] ??= []).push(c);
+  const cards = Object.entries(rooms).map(([room, list]) => {
+    const info = roomInfo(room), task = info.issue ? taskOf(info.issue, info.project) : null;
+    const up = list.filter((c) => c.state === 'running').length;
+    const tone = up === list.length ? 'ok' : up ? 'warn' : 'bad';
+    const label = up === list.length ? 'Funcionando' : up ? 'Parcialmente ligada' : 'Desligada';
+    let hint = '';
+    if (!up && info.kind === 'previa') hint = 'A prévia caiu (o PC ou o Docker reiniciou). Abra de novo pelo cartão do PR em "Agora".';
+    else if (!up) hint = `Sobrou de uma ${task && !ACTIVE.has(task.status) ? 'tarefa que já terminou' : 'execução interrompida'}. Desligada, não gasta CPU nem memória; o controlador remove sozinho.`;
+    const ctr = list.map((c) => {
+      const role = ROLE[(c.name.match(/-(agent|dind|proxy)$/) ?? [])[1]] ?? [c.name, ''];
+      const [t, st] = dockerStatus(c), cpu = parseFloat(c.cpu);
+      return `<div class="ctr"><div><div class="nm">${esc(role[0])}</div><div class="sub">${esc(role[1])}</div></div><div class="st s-${t}">${esc(st)}</div>
+        ${c.state === 'running' ? `<div class="res"><div>CPU <b>${esc(c.cpu ?? '—')}</b><div class="meter"><span style="width:${Math.min(100, (cpu || 0) / 2)}%;${cpu > 150 ? 'background:var(--warn)' : ''}"></span></div></div><div>Memória <b>${esc(c.memPerc ?? '—')}</b><div class="meter"><span style="width:${Math.min(100, parseFloat(c.memPerc) || 0)}%"></span></div></div><div>Processos <b>${esc(c.pids ?? '—')}</b><div class="sub">${esc((c.mem ?? '').split('/')[0])}</div></div></div>` : ''}
+      </div>`;
+    }).join('');
+    return `<article class="card tone-${tone}">
+      <div class="card-head">${info.agent ? agentTag(info.agent) : ''}<span class="grow"></span><span class="pill ${tone}"><span class="dot"></span>${label}</span></div>
+      <h3>${projectChip(info)}${esc(info.title)}</h3>
+      ${task ? `<div class="meta"><span class="click" data-task="${keyOf(task)}" style="cursor:pointer">${esc(task.title)}</span><span>tarefa: ${esc((STATUS[task.status] ?? [task.status])[0])}</span></div>` : ''}
+      ${info.desc ? `<div class="sub" style="margin-top:4px">${esc(info.desc)}</div>` : ''}
+      ${hint ? `<div class="sub s-${tone}" style="margin-top:6px">${esc(hint)}</div>` : ''}
+      <div class="box">${ctr}</div>
+      <div class="sub mono" style="margin-top:8px">${esc(room)}</div>
+    </article>`;
+  });
+  return `${head('Salas', Object.keys(rooms).length)}<div class="cards">${cards.join('')}</div>
+    <div class="sub section">CPU em % de um núcleo. Cada sala tem no máximo 2 CPUs e 4 GiB e só acessa a internet pelo proxy, com lista de sites permitidos.</div>`;
+}
+
+// ---------- Eventos ----------
+function eventTone(event) { return /blocked|failed|error|conflict|breaker|quota/.test(event) ? 'bad' : /retry|stopping|paused|incomplete|unfinished/.test(event) ? 'warn' : /ready|done|resumed|unblocked/.test(event) ? 'ok' : 'idle'; }
+function eventsList(evs, byDay = true) {
+  if (!evs.length) return '<div class="empty">Sem eventos</div>';
+  let day = '';
+  return `<div class="list">${evs.map((e) => {
+    const { time, event, issue, ...rest } = e;
+    const tone = eventTone(event), task = issue ? taskOf(issue, e.project) : null;
+    const label = dayLabel(time);
+    const sep = byDay && label !== day ? `<div class="day">${esc(label)}</div>` : '';
+    day = label;
+    const details = Object.entries(rest).filter(([k]) => !['agent', 'run', 'revision'].includes(k)).map(([k, v]) => k === 'category' ? `<span class="s-${tone}">${esc(FAIL[v] ?? v)}</span>`
+      : k === 'pull' ? `<span>${prLink(v, e.project)}</span>` : k === 'sha' ? `<span class="mono">${esc(String(v).slice(0, 8))}</span>`
+      : k === 'next' || k === 'until' ? `<span>${k === 'next' ? 'próxima' : 'até'} ${when(v)}</span>`
+      : `<span>${esc(k)}: ${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</span>`).join('');
+    return `${sep}<div class="item"><span class="tm">${clock(time)}</span><span class="dot s-${tone}"></span><div class="body">
+      <div class="title">${esc(EVENT[event] ?? event)}${e.agent ? ` ${agentTag(e.agent)}` : ''}</div>
+      ${issue ? `<div class="sub">${issueLink(issue, e.project)} ${esc(task?.title ?? '')}</div>` : ''}
+      ${details ? `<div class="kv">${details}</div>` : ''}</div></div>`;
+  }).join('')}</div>`;
+}
+function viewEventos() {
+  const all = data.events.filter(matchesProject).slice().reverse();
+  const evs = eventsMode === 'importantes' ? all.filter((e) => !MINOR.has(e.event)) : all;
+  return `<div class="toolbar"><div class="chips"><button class="chip ${eventsMode === 'importantes' ? 'on' : ''}" data-events="importantes">Importantes</button><button class="chip ${eventsMode === 'todos' ? 'on' : ''}" data-events="todos">Todos</button></div><span class="grow"></span><span class="sub">mais recentes primeiro</span></div>
+    ${eventsList(evs.slice(0, eventsLimit))}
+    ${evs.length > eventsLimit ? `<div class="actions" style="justify-content:center"><button class="btn" data-more-events>Mostrar mais antigos</button></div>` : ''}`;
+}
+
+// ---------- Sistema ----------
+function spark(ticks) {
+  if (ticks.length < 2) return '<div class="sub">Poucos ciclos registrados</div>';
+  const W = 600, H = 70, n = ticks.length;
+  const max = Math.max(1, ...ticks.map((t) => Math.max(t.active ?? 0, t.openIssues ?? 0, t.pendingGitHub ?? 0)));
+  const line = (key, color) => `<polyline fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke" points="${ticks.map((t, i) => `${(i / (n - 1)) * W},${H - 4 - ((t[key] ?? 0) / max) * (H - 10)}`).join(' ')}"/>`;
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${line('openIssues', 'var(--warn)')}${line('pendingGitHub', 'var(--bad)')}${line('active', 'var(--accent)')}</svg><div class="sub">${when(ticks[0].time)} → ${when(ticks[n - 1].time)} · máximo ${max}</div>`;
+}
+const shortCmd = (c) => c.replace(/^cd backend && node --test.*/, 'testes do backend').replace(/^npm run test:student-ui$/, 'Playwright').replace(/^npx tsc.*/, 'TypeScript').replace(/^npm run lint$/, 'lint').replace(/^npm run build$/, 'build').replace(/^npm run test:payments.*/, 'regras puras');
+function viewSistema() {
+  const c = data.controller, h = hostData ?? {}, runs = data.runs;
+  const pct = (a, b) => a && b ? Math.round(100 * a / b) : null;
+  const mem = pct(h.memUsed, h.memTotal), disk = pct(h.diskUsed, h.diskTotal);
+  const perAgent = c.agents.map((a) => {
+    const rs = runs.filter((r) => r.agent === a).map(runDurations);
+    const finished = rs.filter((r) => r.verifyOk !== null || r.agentOk === false);
+    const ok = rs.filter((r) => r.verifyOk === true).length;
+    return { a, total: rs.length, ok, rate: finished.length ? Math.round(100 * ok / finished.length) : null, avgAgent: avg(rs.map((r) => r.agent)), avgVerify: avg(rs.map((r) => r.verify)) };
+  });
+  const failures = {};
+  for (const e of data.events) if ((e.event === 'task_retry' || e.event === 'task_blocked') && e.category) failures[e.category] = (failures[e.category] ?? 0) + 1;
+  const failRows = Object.entries(failures).sort((x, y) => y[1] - x[1]).map(([k, v]) => ({ label: FAIL[k] ?? k, value: v, color: 'var(--bad)' }));
+  const vruns = runs.filter((r) => r.phases.verificacao?.commands?.length);
+  const byCmd = {};
+  for (const r of vruns) for (const cmd of r.phases.verificacao.commands) (byCmd[cmd.command] ??= []).push(cmd);
+  const avgRows = Object.entries(byCmd).map(([cmd, xs]) => ({ label: cmd, html: esc(shortCmd(cmd)), value: avg(xs.map((x) => x.seconds)), color: xs.some((x) => !x.ok) ? 'var(--warn)' : 'var(--ok)' })).sort((a, b) => b.value - a.value);
+  const im = imagesData ?? { list: [], preload: [] };
+  return `<div class="actions"><button class="btn" data-tab="execucoes">Ver execuções</button></div>
+  <div class="kpis section">
+    <div class="kpi"><div class="k">Memória (WSL)</div><div class="v">${mem ?? '—'}<small>%</small></div><div class="meter"><span style="width:${mem ?? 0}%;${mem > 85 ? 'background:var(--bad)' : ''}"></span></div></div>
+    <div class="kpi"><div class="k">Disco</div><div class="v">${disk ?? '—'}<small>%</small></div><div class="meter"><span style="width:${disk ?? 0}%;${disk > 85 ? 'background:var(--bad)' : ''}"></span></div></div>
+    <div class="kpi"><div class="k">Carga da CPU</div><div class="v" style="font-size:20px">${h.load?.map((x) => x.toFixed(1)).join(' · ') ?? '—'}</div><div class="h">1, 5 e 15 min</div></div>
+    <div class="kpi"><div class="k">Controlador</div><div class="v" style="font-size:20px">${c.lastTick ? ago(c.lastTick.time) : '—'}</div><div class="h">último ciclo · Docker ${esc(h.docker ?? '—')}${c.outbox ? ` · ${c.outbox} pendência(s) GitHub` : ''}</div></div>
+  </div>
+  <div class="section">${head('Agentes')}<div class="cards small">${perAgent.map((p) => `<article class="card"><div class="card-head">${agentTag(p.a)}<span class="grow"></span><span class="sub">${p.total} execução(ões)</span></div>
+    <div class="facts" style="margin-top:10px"><div><div class="k">Verificadas OK</div><div class="v">${p.ok}${p.rate != null ? ` <span class="sub">(${p.rate}%)</span>` : ''}</div></div><div><div class="k">Tempo médio do agente</div><div class="v">${dur(p.avgAgent)}</div></div><div><div class="k">Verificação média</div><div class="v">${dur(p.avgVerify)}</div></div></div></article>`).join('')}</div></div>
+  <div class="section cards wide">
+    <article class="card"><div class="section-head"><h2>Atividade dos últimos ciclos</h2></div>${spark(data.ticks)}<div class="legend"><span><span class="dot" style="color:var(--accent)"></span>tarefas ativas</span><span><span class="dot" style="color:var(--warn)"></span>issues abertas</span><span><span class="dot" style="color:var(--bad)"></span>pendências GitHub</span></div></article>
+    <article class="card"><div class="section-head"><h2>Motivos de falha</h2></div>${bars(failRows)}</article>
+    <article class="card"><div class="section-head"><h2>Tempo médio por comando da verificação</h2></div>${bars(avgRows, { fmt: (v) => `${Math.round(v)} s` })}<div class="sub" style="margin-top:6px">${vruns.length} verificação(ões). Amarelo: o comando já falhou alguma vez.</div></article>
+  </div>
+  <div class="section">${head('Imagens das salas', im.list.length)}<div class="cards small">${im.list.map((i) => `<article class="card"><div class="mono" style="font-weight:600">${esc(i.ref)}</div>${i.missing ? '<div class="s-bad">não encontrada</div>' : `<div class="meta"><span>criada ${ago(i.created)}</span><span>${bytes(i.size)}</span><span class="mono">commit ${esc(i.source?.slice(0, 8) ?? '—')}</span></div>`}</article>`).join('')}</div>
+    <div class="sub" style="margin-top:8px">As imagens dos agentes são refeitas só quando o package-lock.json muda na main. O controlador confere a cada 10 min.</div></div>
+  <div class="section">${head('Abrir no celular')}<div class="cards small">${(acessoData?.links ?? []).map((l) => `<article class="card"><div class="sub" style="font-weight:600">${esc(l.kind)}</div><div class="mono" style="margin:4px 0 8px">${esc(l.url)}</div><button class="btn" data-copy="${esc(l.url)}">Copiar link</button></article>`).join('') || '<div class="sub">Procurando os endereços do computador…</div>'}</div>
+    <div class="sub" style="margin-top:8px">Pelo Tailscale funciona de qualquer lugar com o app ligado no celular. Use o endereço https para instalar o app e receber avisos.</div></div>`;
+}
+
+// ---------- Detalhe da tarefa ----------
+function taskDetail(n) {
+  const t = taskOf(n); if (!t) return '<div class="empty">Tarefa não encontrada</div>';
+  const runs = data.runs.filter((r) => r.issue === t.issue && r.project === t.project).sort((a, b) => b.seq - a.seq);
+  const evs = data.events.filter((e) => e.issue === t.issue && e.project === t.project).reverse();
+  return `
+    <div class="card-head" style="margin-bottom:12px">${projectChip(t)}${agentTag(t.agent, t.account)}${statusPill(t.status)}${issueLink(t.issue, t.project)}${t.prNumber ? prLink(t.prNumber, t.project) : ''}</div>
+    ${retryAction(t)}
+    ${ACTIVE.has(t.status) ? `<div class="card">${steps(t.status)}${liveBlock(t)}</div>` : ''}
+    <div class="facts section">
+      <div><div class="k">Branch</div><div class="v mono">${esc(t.branch)}</div></div>
+      <div><div class="k">Início</div><div class="v">${when(t.startedAt)}</div></div>
+      <div><div class="k">Até o PR</div><div class="v">${t.readyAt ? dur(ts(t.readyAt) - ts(t.startedAt)) : ACTIVE.has(t.status) ? since(t.startedAt) : '—'}</div></div>
+      <div><div class="k">Execuções</div><div class="v">${t.runSeq ?? 0} (${t.attempts ?? 0} falha(s))</div></div>
+      ${(t.areas ?? []).length ? `<div><div class="k">Áreas</div><div class="v">${t.areas.map(esc).join(', ')}</div></div>` : ''}
+    </div>
+    ${t.lastError && t.status !== 'done' ? `<div class="alert ${t.status === 'blocked' ? 'bad' : 'warn'} section">${icon('alert')}<div><b>${esc(FAIL[t.lastError.category] ?? t.lastError.category)}</b> <span class="sub">${when(t.lastError.at)}</span><div class="mono sub" style="margin-top:4px">${esc(t.lastError.detail)}</div></div></div>` : ''}
+    ${t.status === 'ready' ? `<div class="actions"><a class="btn primary" href="https://github.com/${esc(repoOf(t.project))}/pull/${t.prNumber}" target="_blank" rel="noopener">${icon('ext')} Revisar PR #${t.prNumber}</a></div>${previewBlock(t)}` : ''}
+    ${t.status === 'staged' ? `<div class="sub">Etapa pronta${t.nextStages?.length ? `; segue para ${issueList(t.nextStages, t.project)}` : ''}. Entra no PR da última etapa.</div>${previewBlock(t)}` : ''}
+    ${t.stack?.length ? `<div class="sub" style="margin-top:6px">Construída em cima das etapas ${issueList(t.stack, t.project)}.</div>` : ''}
+    ${(t.status === 'ready' || t.status === 'staged') ? '<div class="sub" style="margin-top:6px">Para pedir um ajuste ao agente, use o cartão desta tarefa na aba Agora.</div>' : ''}
+    ${t.agentSummary ? `<div class="h3">O que o agente disse ao terminar</div><div class="summary">${esc(t.agentSummary)}</div>` : ''}
+    <div class="h3">Execuções</div>${runs.length ? `<div class="cards">${runs.map(runCard).join('')}</div>` : '<div class="sub">nenhuma</div>'}
+    <div class="h3">Eventos</div>${eventsList(evs)}
+    <div id="fileView"></div>`;
+}
+function openTask(n) {
+  dlgTask = n;
+  const t = taskOf(n);
+  $('dlgTitle').textContent = `#${t?.issue ?? n} · ${t?.project ? `${t.project} · ` : ''}${t?.title ?? ''}`;
+  const body = taskDetail(n);
+  $('dlgBody').innerHTML = body; $('dlgBody').dataset.html = body;
+  updateTimes($('dlgBody'));
+  if (!$('dlg').open) $('dlg').showModal();
+  if (t && ACTIVE.has(t.status) && !live[keyOf(t)]) refresh();
+}
+async function openFile(run, kind) {
+  const r = await fetch(`/api/file?run=${encodeURIComponent(run)}&kind=${kind}&project=${encodeURIComponent(run.split('/')[0])}`, { cache: 'no-store' });
+  const text = r.ok ? await r.text() : 'Arquivo não encontrado.';
+  const html = `<div class="h3">${esc(run)} · ${esc(kind)}</div><pre>${esc(text || '(vazio)')}</pre>`;
+  const target = $('dlg').open && dlgTask ? $('fileView') : null;
+  if (target) { target.innerHTML = html; target.scrollIntoView({ behavior: 'smooth' }); }
+  else { dlgTask = null; $('dlgTitle').textContent = 'Arquivo da execução'; $('dlgBody').innerHTML = html; $('dlg').showModal(); }
+}
+
+// ---------- Alertas ----------
+function stoppedAlert() {
+  const c = data.controller;
+  if (data.projects?.length === 0) return '';
+  if (!c.enabled) return '';
+  const tickAge = c.lastTick ? Date.now() - ts(c.lastTick.time) : Infinity;
+  const stopped = c.service !== 'active' || !c.alive;
+  if (!stopped && tickAge < 5 * 60_000) return '';
+  const waiting = data.tasks.filter((t) => ACTIVE.has(t.status)).length;
+  return `<div class="alert bad">${icon('alert')}<div><b>${stopped ? 'O controlador está parado' : 'O controlador não completa um ciclo'}</b>${c.lastTick ? ` desde ${when(c.lastTick.time)}` : ''}. Nenhuma issue nova começa${waiting ? ` e ${waiting} tarefa(s) em andamento não avançam` : ''}.<div class="sub">No Ubuntu: <span class="mono">systemctl --user start laboratorio-orquestrador</span></div></div></div>`;
+}
+function pauseAlert() {
+  const p = data.controller.pause;
+  if (!p?.reasons?.length) return '';
+  const held = data.controller.agents.filter((a) => !p.agents.includes(a));
+  return `<div class="alert warn">${icon('alert')}<div><b>Salas novas em pausa</b>${held.length ? ` para ${esc(held.join(' e '))}` : ''} desde ${when(p.since)}: ${p.reasons.map(esc).join('; ')}.<div class="sub">Volta sozinho quando o problema passar; tarefas em andamento continuam.</div></div></div>`;
+}
+
+function render() {
+  renderHeader();
+  let html;
+  if (!data) html = `<div class="alert bad">${icon('alert')}<div>Sem resposta do painel: ${esc(lastError ?? '')}</div></div>`;
+  else {
+    const views = { agora: viewAgora, tarefas: viewTarefas, execucoes: viewExecucoes, salas: viewSalas, eventos: viewEventos, sistema: viewSistema, projetos: viewProjetos };
+    html = (stale ? '' : stoppedAlert()) + pauseAlert() + (['agora', 'tarefas', 'eventos'].includes(tab) ? projectFilters() : '') + (views[tab] ?? viewAgora)();
+  }
+  const main = $('main');
+  if (html !== lastHtml) {
+    // Redesenha só quando algo mudou, preservando campo em foco e blocos abertos.
+    const focus = document.activeElement?.id, caret = document.activeElement?.selectionStart;
+    const open = new Set([...main.querySelectorAll('details[open][data-key]')].map((d) => d.dataset.key));
+    main.innerHTML = html;
+    lastHtml = html;
+    for (const d of main.querySelectorAll('details[data-key]')) if (open.has(d.dataset.key) || (d.hasAttribute('data-remember') && remembered.has(d.dataset.key))) d.open = true;
+    for (const area of main.querySelectorAll('textarea[data-draft]')) {
+      area.value = drafts[area.dataset.draft] ?? '';
+      if (area.value) area.closest('details')?.setAttribute('open', '');
+    }
+    if ((focus === 'fText' || focus?.startsWith('project-') || focus?.startsWith('aj-')) && $(focus)) { $(focus).focus(); try { $(focus).setSelectionRange(caret, caret); } catch {} }
+  }
+  if (dlgTask && $('dlg').open && !$('fileView')?.innerHTML) {
+    const body = taskDetail(dlgTask);
+    if (body !== $('dlgBody').dataset.html) {
+      const open = new Set([...$('dlgBody').querySelectorAll('details[open][data-key]')].map((d) => d.dataset.key));
+      $('dlgBody').innerHTML = body; $('dlgBody').dataset.html = body;
+      for (const d of $('dlgBody').querySelectorAll('details[data-key]')) if (open.has(d.dataset.key)) d.open = true;
+    }
+  }
+  updateTimes();
+}
+
+// ---------- Projetos ----------
+function projectFilters() {
+  const projects = data.projects ?? [];
+  if (filterProject && !projects.some((p) => p.id === filterProject)) filterProject = '';
+  return `<div class="toolbar chips" aria-label="Filtrar por projeto"><button class="chip ${!filterProject ? 'on' : ''}" data-project-filter="">Todos</button>${projects.map((p) => `<button class="chip ${filterProject === p.id ? 'on' : ''}" data-project-filter="${esc(p.id)}">${esc(p.repo)}</button>`).join('')}</div>`;
+}
+const PROJECT_STATUS = {
+  'verificando-acesso': ['info', 'Verificando acesso'], 'sem-acesso': ['bad', 'Sem acesso: inclua o repositório no token'],
+  'precisa-configuracao': ['warn', 'Precisa de configuração'], configurando: ['info', 'Configuração em andamento: aguarde e aprove o PR'],
+  'construindo-imagem': ['info', 'Construindo a imagem (pode levar ~20 min)'], pronto: ['ok', 'Pronto'], pausado: ['warn', 'Pausado'], erro: ['bad', 'Precisa de você']
+};
+function suggestId(repo) {
+  let base = String(repo).toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!/^[a-z]/.test(base)) base = 'p' + base;
+  base = base.padEnd(2, 'p').slice(0, 12);
+  const used = new Set(data.projectIds ?? (data.projects ?? []).map((p) => p.id));
+  for (let n = 0; ; n++) { const suffix = n ? String(n) : ''; const id = base.slice(0, 12 - suffix.length) + suffix; if (!used.has(id)) return id; }
+}
+function repositoryInput(value) {
+  const m = /^(?:https:\/\/github\.com\/)?([^/]+)\/([^/]+?)\/?$/.exec(value.trim());
+  if (!m) throw new Error('Cole o endereço https://github.com/dono/repositorio.');
+  const owner = m[1], repo = m[2].replace(/\.git$/, '');
+  if (![owner, repo].every((v) => /^[A-Za-z0-9_.-]{1,100}$/.test(v) && !['.', '..'].includes(v))) throw new Error('Dono ou repositório inválido.');
+  return { owner, repo };
+}
+function viewProjetos() {
+  return `<div class="section"><div class="cards">${(data.projects ?? []).map((p) => {
+    const [tone, label] = PROJECT_STATUS[p.status] ?? PROJECT_STATUS['verificando-acesso'];
+    const tasks = data.tasks.filter((t) => t.project === p.id);
+    const action = (type, text) => `<button class="btn" data-project-action="${type}" data-project-id="${esc(p.id)}">${text}</button>`;
+    return `<article class="card tone-${tone}"><h3><a href="https://github.com/${esc(p.owner)}/${esc(p.repo)}" target="_blank" rel="noopener">${esc(p.owner)}/${esc(p.repo)}</a></h3>
+      <div class="sub">ID: ${esc(p.id)} · configuração ${esc(({ repositorio: 'do repositório', laboratorio: 'do laboratório', partida: 'de partida' })[p.configurationSource] ?? 'de partida')}</div>
+      <p class="s-${tone}"><b>${label}</b></p>${p.detail && p.status !== 'sem-acesso' ? `<p class="sub">${esc(p.detail)}</p>` : ''}
+      <div class="meta"><span>${tasks.filter((t) => ACTIVE.has(t.status)).length} rodando</span><span>${tasks.filter((t) => ['ready', 'staged'].includes(t.status)).length} aguardando você</span><span>${tasks.filter((t) => ['retry', 'blocked'].includes(t.status)).length} com problema</span></div>
+      <div class="actions">${action(p.enabled ? 'pausar' : 'retomar', p.enabled ? 'Pausar' : 'Retomar')}${action('remover', 'Remover')}${p.status === 'precisa-configuracao' ? action('gerar-configuracao', 'Gerar configuração') : ''}${['sem-acesso', 'erro'].includes(p.status) ? action('verificar-acesso', 'Verificar de novo') : ''}</div>
+      ${p.status === 'sem-acesso' ? `<details open><summary>Como liberar o acesso</summary><ol><li>Abra <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">os tokens do GitHub</a> e edite o token do laboratório.</li><li>Em “Repository access”, inclua este repositório.</li><li>Confira: Contents: leitura e escrita; Issues: leitura e escrita; Pull requests: leitura e escrita; Metadata: leitura.</li><li>Salve e toque em “Verificar de novo”.</li></ol></details>` : ''}</article>`;
+  }).join('')}</div></div>
+  <div class="section">${head('Adicionar projeto')}<div class="card"><div class="form">
+    <label>Endereço do GitHub<input type="url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" id="project-url" placeholder="https://github.com/dono/repositorio" value="${esc(projectUrl)}" maxlength="250"></label>
+    <label>ID do projeto <span class="sub">(curto, só letras minúsculas e números)</span><input type="text" autocapitalize="off" autocorrect="off" spellcheck="false" id="project-id" value="${esc(projectId)}" maxlength="12" pattern="[a-z][a-z0-9]{1,11}"></label>
+    </div><div class="actions"><button class="btn primary" data-project-action="adicionar">Adicionar</button></div><p class="sub">Até 10 projetos. O pedido é aplicado no próximo ciclo (até 1 min).</p></div></div>
+  <div class="section">${head('Começar um projeto do zero')}<div class="card"><p style="margin:0">Crie o repositório no GitHub marcando “Add a README”. Adicione aqui, inclua no token e toque em “Gerar configuração”. Aprove o PR de configuração e depois abra a primeira issue descrevendo o que quer construir.</p></div></div>`;
+}
+
+// ---------- Avisos no celular (Web Push) ----------
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function b64ToBytes(s) { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4)); return Uint8Array.from(b, (c) => c.charCodeAt(0)); }
+async function swReady() {
+  if (!('serviceWorker' in navigator)) return null;
+  await navigator.serviceWorker.register('/sw.js');
+  return navigator.serviceWorker.ready;
+}
+async function checkPush() {
+  pushState.supported = window.isSecureContext && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  if (!pushState.supported) return;
+  try {
+    const reg = await swReady();
+    const sub = await reg.pushManager.getSubscription();
+    pushState.endpoint = sub?.endpoint ?? null;
+    pushState.subscribed = sub ? (await get(`/api/push?endpoint=${encodeURIComponent(sub.endpoint)}`)).subscribed : false;
+    // Inscrição que o servidor perdeu (ex.: arquivo apagado): reenvia em silêncio.
+    if (sub && !pushState.subscribed && Notification.permission === 'granted') {
+      await post('/api/push/subscribe', { subscription: sub.toJSON() }); pushState.subscribed = true;
+    }
+  } catch { /* sem avisos neste aparelho */ }
+  renderHeader();
+}
+function pushDialog(msg = '') {
+  dlgTask = null;
+  $('dlgTitle').textContent = 'Avisos no celular';
+  let body;
+  if (!window.isSecureContext) body = `<div class="alert warn">${icon('alert')}<div>Os avisos só funcionam pelo endereço <b>https</b> do Tailscale. Abra o painel por ele (veja "Abrir no celular" na aba Sistema).</div></div>`;
+  else if (isIOS && !standalone) body = `<div class="alert warn">${icon('alert')}<div>No iPhone, os avisos só funcionam com o painel <b>instalado</b>: no Safari toque em <b>Compartilhar → Adicionar à Tela de Início</b> e abra pelo ícone "Agentes".</div></div>`;
+  else if (!pushState.supported) body = `<div class="alert warn">${icon('alert')}<div>Este navegador não suporta avisos.</div></div>`;
+  else if (Notification.permission === 'denied') body = `<div class="alert bad">${icon('alert')}<div>Os avisos estão bloqueados para este app. No iPhone: <b>Ajustes → Notificações → Agentes</b>; no computador, nas permissões do site.</div></div>`;
+  else body = pushState.subscribed
+    ? `<p><span class="pill ok"><span class="dot"></span>Ligados neste aparelho</span></p><div class="actions"><button class="btn primary" data-push="test">Mandar um aviso de teste</button><button class="btn danger" data-push="off">Desligar neste aparelho</button></div>`
+    : `<p>Receba um aviso mesmo com o app fechado.</p><div class="actions"><button class="btn primary" data-push="on">${icon('bell')} Ligar avisos</button></div>`;
+  $('dlgBody').innerHTML = `${body}${msg ? `<p class="sub">${esc(msg)}</p>` : ''}
+    <div class="h3">Quando avisa</div>
+    <div class="list">
+      <div class="item"><span class="dot s-ok"></span><div class="body"><div class="title">PR pronto: aguarda sua aprovação no GitHub</div><div class="sub">Toque no aviso para abrir o PR.</div></div></div>
+      <div class="item"><span class="dot s-ok"></span><div class="body"><div class="title">Etapa pronta, seguindo para a próxima</div><div class="sub">Tarefas divididas ("depende de #N"): só informa, não pede nada.</div></div></div>
+      <div class="item"><span class="dot s-ok"></span><div class="body"><div class="title">Ajuste pronto</div><div class="sub">O agente terminou o ajuste que você pediu pelo painel.</div></div></div>
+      <div class="item"><span class="dot s-ok"></span><div class="body"><div class="title">Tarefa concluída</div><div class="sub">PR incorporado à main.</div></div></div>
+      <div class="item"><span class="dot s-bad"></span><div class="body"><div class="title">Tarefa encontrou problemas</div><div class="sub">Verificação falhou, agente saiu com erro, tempo esgotado, bloqueio ou solução incompleta.</div></div></div>
+      <div class="item"><span class="dot s-warn"></span><div class="body"><div class="title">Cota do agente esgotada ou salas em pausa</div></div></div>
+    </div>
+    <p class="sub">Falhas de rede e continuações automáticas não avisam: o laboratório resolve sozinho. ${data?.push?.subscribers ? `${data.push.subscribers} aparelho(s) inscrito(s).` : ''}</p>`;
+  if (!$('dlg').open) $('dlg').showModal();
+}
+async function pushAction(kind) {
+  try {
+    if (kind === 'on') {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return pushDialog('Permissão negada.');
+      const reg = await swReady();
+      const { publicKey } = await get('/api/push');
+      const sub = (await reg.pushManager.getSubscription()) ?? await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(publicKey) });
+      await post('/api/push/subscribe', { subscription: sub.toJSON() });
+      pushState.subscribed = true; pushState.endpoint = sub.endpoint;
+      pushDialog('Pronto. Um aviso de confirmação deve chegar em instantes.');
+    } else if (kind === 'test') {
+      await post('/api/push/test', { endpoint: pushState.endpoint });
+      pushDialog('Aviso de teste enviado.');
+    } else if (kind === 'off') {
+      const reg = await swReady();
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) { await post('/api/push/unsubscribe', { endpoint: sub.endpoint }); await sub.unsubscribe(); }
+      pushState.subscribed = false; pushState.endpoint = null;
+      pushDialog('Avisos desligados neste aparelho.');
+    }
+  } catch (e) { pushDialog(`Não deu certo: ${e.message}`); }
+  renderHeader();
+}
+
+function toast(text) {
+  const el = document.createElement('div'); el.className = 'toast'; el.textContent = text;
+  document.body.appendChild(el); setTimeout(() => el.remove(), 3500);
+}
+
+// <details data-remember>: lembra no aparelho o que foi aberto ou fechado (toggle não borbulha).
+document.addEventListener('toggle', (e) => {
+  const d = e.target;
+  if (!(d instanceof HTMLDetailsElement) || !d.hasAttribute('data-remember')) return;
+  if (d.open) remembered.add(d.dataset.key); else remembered.delete(d.dataset.key);
+  try { localStorage.setItem('painel.abertos', JSON.stringify([...remembered])); } catch {}
+}, true);
+
+document.addEventListener('click', async (e) => {
+  const retry = e.target.closest('[data-retry]');
+  if (retry) {
+    e.stopPropagation(); retry.disabled = true;
+    try {
+      await post('/api/tentar-novamente', { project: retry.dataset.project, issue: Number(retry.dataset.issue) });
+      retry.textContent = 'Nova tentativa solicitada';
+      toast('Nova tentativa solicitada. O controlador verifica o ambiente no próximo ciclo (até 1 min).');
+      await refresh();
+    } catch (err) { toast(err.message); retry.disabled = false; }
+    return;
+  }
+  const pf = e.target.closest('[data-project-filter]');
+  if (pf) { filterProject = pf.dataset.projectFilter; try { localStorage.setItem('painel.projeto', filterProject); } catch {} render(); return; }
+  const pa = e.target.closest('[data-project-action]');
+  if (pa) {
+    const type = pa.dataset.projectAction;
+    if (type === 'pausar' && !confirm('Pausar este projeto? Nenhuma tarefa nova começa nele; as que já estão rodando terminam normalmente.')) return;
+    if (type === 'remover' && !confirm('Remover da lista? Nada será apagado: histórico, espelho, imagens e branches ficam guardados. Tarefas em andamento precisam terminar primeiro.')) return;
+    try {
+      let body = { id: pa.dataset.projectId };
+      if (type === 'adicionar') {
+        const repo = repositoryInput(projectUrl);
+        if ((data.projects ?? []).length >= 10) throw new Error('O limite é de 10 projetos.');
+        if (!/^[a-z][a-z0-9]{1,11}$/.test(projectId)) throw new Error('Use um ID com 2 a 12 letras minúsculas e números, começando por letra.');
+        if ((data.projectIds ?? (data.projects ?? []).map((p) => p.id)).includes(projectId)) throw new Error('Este ID já está em uso.');
+        body = { ...repo, id: projectId };
+      }
+      pa.disabled = true;
+      await post('/api/projetos/' + type, body);
+      if (type === 'adicionar') { projectUrl = ''; projectId = ''; projectIdEdited = false; }
+      toast('Pedido enviado. Aguarde o próximo ciclo.'); render(); setTimeout(refresh, 1500);
+    } catch (err) { toast(err.message); pa.disabled = false; }
+    return;
+  }
+  const b = e.target.closest('[data-tab]');
+  if (b) { e.preventDefault(); tab = b.dataset.tab; try { localStorage.setItem('painel.tab', tab); } catch {} if ($('dlg').open) $('dlg').close(); render(); window.scrollTo(0, 0); refresh(); return; }
+  const f = e.target.closest('[data-file]');
+  if (f) { e.stopPropagation(); openFile(f.dataset.file, f.dataset.kind); return; }
+  const p = e.target.closest('[data-push]');
+  if (p) { pushAction(p.dataset.push); return; }
+  const pv = e.target.closest('[data-preview]');
+  if (pv) {
+    e.stopPropagation(); pv.disabled = true;
+    try {
+      await post('/api/previa', pv.dataset.preview === 'abrir' ? { acao: 'abrir', issue: Number(pv.dataset.issue), project: pv.dataset.project } : { acao: 'parar', project: pv.dataset.project });
+      toast(pv.dataset.preview === 'abrir' ? 'Preparando a prévia: leva uns 2 a 4 minutos.' : 'Desligando a prévia.');
+    } catch (err) { toast(err.message); }
+    setTimeout(refresh, 1500); return;
+  }
+  const aj = e.target.closest('[data-ajuste]');
+  if (aj) {
+    e.stopPropagation();
+    const issue = Number(aj.dataset.issue), project = aj.dataset.project;
+    const key = `${project}:${issue}`;
+    if (aj.dataset.ajuste === 'enviar') {
+      const texto = (drafts[key] ?? '').trim();
+      if (!texto) { toast('Escreva o que precisa mudar.'); $(`aj-${key}`)?.focus(); return; }
+      aj.disabled = true;
+      try {
+        await post('/api/ajuste', { acao: 'enviar', project, issue, texto });
+        delete drafts[key]; saveDrafts();
+        toast('Ajuste enviado. O agente começa no próximo ciclo.');
+      } catch (err) { toast(err.message); aj.disabled = false; return; }
+    } else {
+      try { await post('/api/ajuste', { acao: 'cancelar', project, issue }); toast('Pedido cancelado.'); } catch (err) { toast(err.message); }
+    }
+    setTimeout(refresh, 600); return;
+  }
+  const chip = e.target.closest('[data-filter]');
+  if (chip) { filterStatus = chip.dataset.filter; render(); return; }
+  const ev = e.target.closest('[data-events]');
+  if (ev) { eventsMode = ev.dataset.events; eventsLimit = 120; render(); return; }
+  if (e.target.closest('[data-more-events]')) { eventsLimit += 200; render(); return; }
+  const cp = e.target.closest('[data-copy]');
+  if (cp) { try { await navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado'; } catch {} return; }
+  if (e.target.closest('a, summary, details .feed')) return;
+  const t = e.target.closest('[data-task]');
+  if (t) openTask(t.dataset.task);
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'project-url') {
+    projectUrl = e.target.value;
+    if (!projectIdEdited) { try { projectId = suggestId(repositoryInput(projectUrl).repo); $('project-id').value = projectId; } catch {} }
+  }
+  if (e.target.id === 'project-id') { projectId = e.target.value; projectIdEdited = true; }
+  if (e.target.id === 'fText') { filterText = e.target.value; render(); }
+  if (e.target.dataset?.draft) { drafts[e.target.dataset.draft] = e.target.value; saveDrafts(); }
+  if (e.target.id === 'fAgent') { filterAgent = e.target.value; render(); }
+});
+$('dlgClose').onclick = () => $('dlg').close();
+$('dlg').addEventListener('close', () => { dlgTask = null; $('dlgBody').dataset.html = ''; });
+$('dlg').addEventListener('click', (e) => { if (e.target === $('dlg')) $('dlg').close(); });
+$('bell').onclick = () => pushDialog();
+function themeIcon() { $('theme').innerHTML = icon('moon'); }
+$('theme').onclick = () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('painel.theme', root.dataset.theme); } catch {}
+};
+try { const t = localStorage.getItem('painel.theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+themeIcon();
+loadSnapshot();
+if (data) render();
+refresh(true);
+checkPush();
+setInterval(() => refresh(), 5000);
+setInterval(() => updateTimes(), 1000);
+setInterval(() => refresh(true), 60000);
+// No celular o app fica congelado em segundo plano: ao voltar, atualiza na hora em vez de mostrar dados velhos.
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refresh(true); });
+window.addEventListener('pageshow', () => refresh(true));
+</script>
+</body>
+</html>

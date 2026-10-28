@@ -1,0 +1,88 @@
+{
+  "enabled": false,
+  "github": {
+    "apiBase": "https://api.github.com",
+    "controllerTokenFile": "secrets/github-controller.env"
+  },
+  "labels": {
+    "agents": [
+      "codex",
+      "claude"
+    ],
+    "inProgress": "em-andamento",
+    "blocked": "bloqueado",
+    "readyForReview": "pronto-para-revisao",
+    "areaPrefix": "area:"
+  },
+  "scheduler": {
+    "pollSeconds": 60,
+    "activePollSeconds": 10,
+    "maxConcurrency": 1,
+    "hardMaxConcurrency": 3,
+    "defaultArea": "geral",
+    "holdAreaWhilePrOpen": true
+  },
+  "retry": {
+    "baseSeconds": 300,
+    "maxSeconds": 3600,
+    "maxAttempts": 4,
+    "networkSeconds": 600,
+    "maxContinuations": 2,
+    "continueSeconds": 60
+  },
+  "breaker": {
+    "quickMinutes": 5,
+    "windowMinutes": 30,
+    "threshold": 3,
+    "pauseMinutes": 15,
+    "maxPauseMinutes": 240
+  },
+  "health": {
+    "timeWaitMax": 10000,
+    "minFreeGb": 15
+  },
+  "rooms": {
+    "branchPrefix": "agente",
+    "deniedDomains": [],
+    "agentCliAuth": true,
+    "agentTimeoutMinutes": 240,
+    "verifyTimeoutMinutes": 60,
+    "agentIdleMinutes": 25
+  },
+  "agents": {
+    "codex": {
+      "command": [
+        "codex",
+        "exec",
+        "--ephemeral",
+        "--dangerously-bypass-approvals-and-sandbox"
+      ]
+    },
+    "claude": {
+      "command": [
+        "env",
+        "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1",
+        "claude",
+        "--dangerously-skip-permissions",
+        "-p",
+        "--max-turns",
+        "500"
+      ]
+    }
+  },
+  "images": {
+    "checkMinutes": 10,
+    "preload": [],
+    "preloadMaxAgeDays": 7
+  },
+  "quota": {
+    "defaultMinutes": 60,
+    "maxDays": 7
+  },
+  "notify": {
+    "enabled": false
+  },
+  "cleanup": {
+    "days": 7
+  }
+}

@@ -1,0 +1,32 @@
+name: testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Sintaxe dos scripts
+        run: |
+          for f in scripts/*.sh proxy/entrypoint.sh; do bash -n "$f"; done
+          for f in orchestrator/src/*.mjs scripts/*.mjs; do node --check "$f"; done
+      - name: Testes
+        working-directory: orchestrator
+        run: npm test
+      - name: Nenhum segredo versionado
+        run: |
+          if git ls-files | grep -E '(^|/)(local\.env|config\.env|secrets/[^/]+\.env)$'; then exit 1; fi
+          if git grep -nE '(github_pat_[A-Za-z0-9_]{30,}|sk-ant-[A-Za-z0-9_-]{30,}|sk-proj-[A-Za-z0-9_-]{30,})' -- ':!orchestrator/test'; then exit 1; fi

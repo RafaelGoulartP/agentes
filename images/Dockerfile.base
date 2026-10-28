@@ -1,0 +1,40 @@
+# syntax=docker/dockerfile:1.7
+FROM docker:29-cli AS docker_cli
+
+FROM node:24-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    NPM_CONFIG_UPDATE_NOTIFIER=false
+
+COPY --from=docker_cli /usr/local/bin/docker /usr/local/bin/docker
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates curl git gh jq less openssh-client ripgrep tmux dumb-init sudo \
+    && printf 'node ALL=(ALL:ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/node \
+    && chmod 0440 /etc/sudoers.d/node \
+    && visudo -cf /etc/sudoers.d/node \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+COPY dependencias/ ./
+COPY instalar.sh /tmp/lab-instalar.sh
+RUN bash /tmp/lab-instalar.sh \
+    && if [ -d /ms-playwright ]; then chmod -R a+rX /ms-playwright; fi \
+    && printf 'Acquire::http::Proxy "http://proxy:3128";\nAcquire::https::Proxy "http://proxy:3128";\n' \
+       > /etc/apt/apt.conf.d/80lab-proxy
+
+COPY codigo/ .
+
+RUN git init -b main \
+    && git config user.name "Laboratorio de Agentes" \
+    && git config user.email "laboratorio@teste.local" \
+    && git add . \
+    && git commit -m "Snapshot local para sala descartavel" \
+    && chown -R node:node /workspace /home/node
+
+USER node
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["sleep", "infinity"]
+

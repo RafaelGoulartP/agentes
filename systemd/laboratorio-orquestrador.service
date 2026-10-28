@@ -1,0 +1,25 @@
+[Unit]
+Description=Orquestrador do laboratorio de agentes
+# Modelo: scripts/install-user-service.sh troca @LAB_ROOT@ pela pasta do laboratorio.
+# O Docker pode rodar fora desta maquina/distribuicao (Docker Desktop); main.mjs espera `docker info` responder.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@LAB_ROOT@/orchestrator
+ExecStart=@LAB_ROOT@/scripts/run-orchestrator.sh
+# Com enabled=false o processo sai com 0 e nao e reiniciado.
+Restart=on-failure
+RestartSec=30
+# Os supervisores das salas sobrevivem a reinicios do controlador e sao reconciliados depois.
+KillMode=process
+TimeoutStopSec=30
+Environment=NODE_ENV=production
+NoNewPrivileges=true
+# Sem ProtectSystem/ProtectHome/PrivateTmp: em unidade de usuario eles criam um user namespace que
+# mapeia o grupo docker para nogroup e bloqueiam o socket do Docker.
+# O acesso ao Docker ja equivale a root no host; o isolamento real esta nas salas.
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,10 @@
+ARG BASE_IMAGE=sala-base-principal:local
+FROM ${BASE_IMAGE}
+
+USER root
+RUN npm install -g @anthropic-ai/claude-code@2.1.301 \
+    && npm cache clean --force
+USER node
+
+ENV DISABLE_AUTOUPDATER=1
+

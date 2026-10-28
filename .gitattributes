@@ -1,0 +1,5 @@
+# Scripts rodam em Linux/WSL: finais de linha LF mesmo em clones feitos no Windows (core.autocrlf=true),
+# senão o bash falha com "$'\r': command not found".
+* text=auto eol=lf
+*.png binary
+*.ico binary

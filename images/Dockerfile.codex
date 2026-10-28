@@ -1,0 +1,8 @@
+ARG BASE_IMAGE=sala-base-principal:local
+FROM ${BASE_IMAGE}
+
+USER root
+RUN npm install -g @openai/codex@0.163.0 \
+    && npm cache clean --force
+USER node
+

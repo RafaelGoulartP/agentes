@@ -1,0 +1,31 @@
+# Segredos: só os modelos (*.example) entram no Git.
+secrets/*
+!secrets/.gitkeep
+!secrets/*.example
+*.pem
+*.key
+.env
+.env.*
+
+# Configuração local da máquina (caminhos, nomes e detalhes do projeto).
+local.env
+config.env
+orchestrator/config.json
+
+# Estado, execuções e registros do laboratório.
+orchestrator/state/*
+!orchestrator/state/.gitkeep
+workspaces/*
+!workspaces/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Temporários e ferramentas.
+*.tmp
+node_modules/
+.test-tmp/
+.test-*/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

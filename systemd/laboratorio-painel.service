@@ -1,0 +1,15 @@
+[Unit]
+Description=Painel local do laboratorio de agentes
+# Modelo: scripts/install-user-service.sh troca @LAB_ROOT@ pela pasta do laboratorio.
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@LAB_ROOT@/orchestrator
+ExecStart=@LAB_ROOT@/scripts/run-dashboard.sh
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target
