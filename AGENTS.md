@@ -42,7 +42,7 @@ Monte um resumo para a pessoa: sistema, o que já existe, o que falta e quanta m
 | Situação | Ação |
 |---|---|
 | Windows sem WSL | Você não consegue instalar o WSL de dentro do Linux. Passe à pessoa o passo "Windows" de `docs/INSTALACAO.md` e espere. |
-| Pasta em `/mnt/c/...` | Proponha clonar de novo em `~/laboratorio-agentes`. Em `/mnt/c` os scripts quebram (CRLF) e o modo 600 dos segredos não vale. |
+| Pasta em `/mnt/c/...` | Proponha clonar de novo em `~/agentes`. Em `/mnt/c` os scripts quebram (CRLF) e o modo 600 dos segredos não vale. |
 | Sem Docker ou sem acesso ao daemon | Linux: proponha `curl -fsSL https://get.docker.com \| sh` e `usermod -aG docker`. WSL: a pessoa precisa abrir o Docker Desktop e ativar a integração com a distribuição. |
 | Node < 22 ou ausente | Proponha nvm + `nvm install 24` (sem sudo). |
 | Sem systemd no WSL | Proponha `[boot] systemd=true` em `/etc/wsl.conf` e `wsl --shutdown` (a pessoa roda o último no Windows). |
@@ -52,7 +52,7 @@ Monte um resumo para a pessoa: sistema, o que já existe, o que falta e quanta m
 ### 2. Instalar
 
 ```bash
-cd ~/laboratorio-agentes
+cd ~/agentes
 ./scripts/instalar.sh
 ```
 
@@ -110,7 +110,7 @@ Para escrever um bom `.laboratorio.json`:
 6. `proibido.dominios`: pergunte à pessoa o domínio de produção dela e inclua. Pergunte também por
    pastas e scripts que nunca devem ser executados (deploy, migração de produção).
 7. `previa`: os passos para subir o app com dados falsos, escutando em `0.0.0.0`.
-8. Valide a partir da raiz do projeto: `node ~/laboratorio-agentes/scripts/validar-config.mjs`
+8. Valide a partir da raiz do projeto: `node ~/agentes/scripts/validar-config.mjs`
    (imprime `Configuração válida.` ou o campo com problema).
 
 Outras adaptações comuns, sempre com confirmação:

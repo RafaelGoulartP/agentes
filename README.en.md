@@ -1,12 +1,13 @@
-<h1 align="center">Agents Lab (Laboratório de Agentes)</h1>
+<h1 align="center">Agentes</h1>
 
 <p align="center">
+  <i>(“agents” in Portuguese) an AI agents lab for your GitHub repositories</i><br>
   <b>Write an issue. Get a tested pull request.</b><br>
   Claude Code and Codex working as developers on your GitHub repo, on your own machine, inside isolated Docker rooms.
 </p>
 
 <p align="center">
-  <a href="https://github.com/RafaelGoulartP/agents-publico/actions/workflows/testes.yml"><img src="https://github.com/RafaelGoulartP/agents-publico/actions/workflows/testes.yml/badge.svg" alt="tests"></a>
+  <a href="https://github.com/RafaelGoulartP/agentes/actions/workflows/testes.yml"><img src="https://github.com/RafaelGoulartP/agentes/actions/workflows/testes.yml/badge.svg" alt="tests"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white" alt="Node 22+">
   <img src="https://img.shields.io/badge/npm%20dependencies-0-brightgreen" alt="zero npm dependencies">
@@ -41,7 +42,7 @@
 
 ## Why it's different
 
-| | Agent in your terminal | Agents Lab |
+| | Agent in your terminal | Agentes |
 |---|---|---|
 | Tasks at once | one, while you watch | up to 3, unattended, from the issue queue |
 | Where the agent runs | your machine, your files, your tokens | a disposable Docker room, no GitHub token |
@@ -71,8 +72,8 @@
 Requirements: Linux or Windows 10/11 with WSL2, Docker, Node.js 22+, and a Claude and/or Codex login.
 
 ```bash
-git clone https://github.com/RafaelGoulartP/agents-publico.git ~/laboratorio-agentes
-cd ~/laboratorio-agentes
+git clone https://github.com/RafaelGoulartP/agentes.git ~/agentes
+cd ~/agentes
 ./scripts/instalar.sh                      # checks everything, creates local files, runs the tests
 nano secrets/github-controller.env         # paste a fine-grained GitHub token into GH_TOKEN=
 ./scripts/install-user-service.sh --ativar # starts the dashboard and the orchestrator (systemd)

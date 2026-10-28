@@ -141,7 +141,7 @@ Para dividir o trabalho entre duas assinaturas, aponte as variáveis com sufixo 
 O controlador usa **um** token para ler issues, fazer push das branches e abrir PRs. Os agentes nunca o recebem.
 
 1. Abra https://github.com/settings/personal-access-tokens/new (token *fine-grained*).
-2. **Token name:** `laboratorio-agentes`. **Expiration:** a que preferir (anote para renovar).
+2. **Token name:** `agentes`. **Expiration:** a que preferir (anote para renovar).
 3. **Resource owner:** você (ou a organização dona dos repositórios).
 4. **Repository access:** *Only select repositories* → escolha os repositórios que o laboratório vai atender.
 5. **Permissions → Repository permissions:**
@@ -162,8 +162,8 @@ e inclua o repositório. Não é preciso trocar o token.
 
 ```bash
 cd ~
-git clone https://github.com/RafaelGoulartP/agents-publico.git laboratorio-agentes
-cd laboratorio-agentes
+git clone https://github.com/RafaelGoulartP/agentes.git
+cd agentes
 ./scripts/instalar.sh
 ```
 
@@ -249,7 +249,7 @@ o [Tailscale](https://tailscale.com) (VPN gratuita para uso pessoal):
 ## Atualizar
 
 ```bash
-cd ~/laboratorio-agentes
+cd ~/agentes
 git pull
 ./scripts/instalar.sh              # confere e roda os testes de novo
 systemctl --user restart laboratorio-painel laboratorio-orquestrador
@@ -265,7 +265,7 @@ systemctl --user disable --now laboratorio-painel laboratorio-orquestrador
 rm ~/.config/systemd/user/laboratorio-{painel,orquestrador}.service
 docker ps -aq --filter label=lab.room | xargs -r docker rm -f -v
 docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(sala-|laboratorio-proxy)' | xargs -r docker rmi
-rm -rf ~/laboratorio-agentes
+rm -rf ~/agentes
 ```
 
 Revogue também o token em https://github.com/settings/personal-access-tokens.

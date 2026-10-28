@@ -38,7 +38,7 @@ PR com o arquivo (e um `AGENTS.md`, se faltar). Antes do merge, confira:
 - [ ] `previa` sobe o app com dados de teste (se quiser testar PRs pelo painel antes do merge).
 
 Para escrever à mão, veja a referência em [CONFIGURACAO.md](CONFIGURACAO.md#laboratoriojson-no-seu-projeto).
-Para conferir o arquivo, rode na raiz do projeto: `node ~/laboratorio-agentes/scripts/validar-config.mjs`.
+Para conferir o arquivo, rode na raiz do projeto: `node ~/agentes/scripts/validar-config.mjs`.
 
 > Se o projeto ainda não tem testes, comece por aí: abra uma issue pedindo ao agente que crie testes
 > básicos e um comando `npm test` (ou equivalente). Sem verificação, o laboratório não tem como

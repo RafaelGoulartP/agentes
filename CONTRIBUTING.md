@@ -11,8 +11,8 @@ Obrigado pelo interesse! Issues e pull requests são bem-vindos, em português o
 ## Ambiente
 
 ```bash
-git clone https://github.com/RafaelGoulartP/agents-publico.git laboratorio-agentes
-cd laboratorio-agentes/orchestrator
+git clone https://github.com/RafaelGoulartP/agentes.git
+cd agentes/orchestrator
 npm test        # Node 22+, sem npm install
 ```
 

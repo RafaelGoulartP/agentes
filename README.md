@@ -1,4 +1,4 @@
-<h1 align="center">Laboratório de Agentes</h1>
+<h1 align="center">Agentes</h1>
 
 <p align="center">
   <b>Escreva uma issue. Receba um pull request testado.</b><br>
@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/RafaelGoulartP/agents-publico/actions/workflows/testes.yml"><img src="https://github.com/RafaelGoulartP/agents-publico/actions/workflows/testes.yml/badge.svg" alt="testes"></a>
+  <a href="https://github.com/RafaelGoulartP/agentes/actions/workflows/testes.yml"><img src="https://github.com/RafaelGoulartP/agentes/actions/workflows/testes.yml/badge.svg" alt="testes"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue" alt="Licença MIT"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white" alt="Node 22+">
   <img src="https://img.shields.io/badge/depend%C3%AAncias%20npm-0-brightgreen" alt="zero dependências npm">
@@ -46,7 +46,7 @@
 
 ## Por que é diferente
 
-| | Agente no seu terminal | Laboratório de Agentes |
+| | Agente no seu terminal | Agentes |
 |---|---|---|
 | Quantas tarefas ao mesmo tempo | uma, com você olhando | até 3, sozinhas, a partir da fila de issues |
 | Onde o agente roda | na sua máquina, com seus arquivos e tokens | numa sala Docker descartável, sem token do GitHub |
@@ -108,8 +108,8 @@ O passo a passo completo, do zero, está em **[docs/INSTALACAO.md](docs/INSTALAC
 Resumo para quem já tem Docker e Node:
 
 ```bash
-git clone https://github.com/RafaelGoulartP/agents-publico.git ~/laboratorio-agentes
-cd ~/laboratorio-agentes
+git clone https://github.com/RafaelGoulartP/agentes.git ~/agentes
+cd ~/agentes
 ./scripts/instalar.sh            # confere tudo, cria os arquivos locais e roda os testes
 nano secrets/github-controller.env   # cole o token do GitHub em GH_TOKEN=
 ./scripts/install-user-service.sh --ativar   # liga painel e orquestrador (systemd)
@@ -242,7 +242,7 @@ e do [SWE-agent](https://github.com/SWE-agent/SWE-agent). Lista completa, com li
 ## Contribua
 
 Achou um problema, instalou num sistema diferente ou tem uma ideia? Abra uma
-[issue](https://github.com/RafaelGoulartP/agents-publico/issues) ou um PR (veja [CONTRIBUTING.md](CONTRIBUTING.md)).
+[issue](https://github.com/RafaelGoulartP/agentes/issues) ou um PR (veja [CONTRIBUTING.md](CONTRIBUTING.md)).
 Se o projeto te ajudou, deixe uma ⭐: isso ajuda outras pessoas a encontrá-lo.
 
 ## Licença
