@@ -231,6 +231,14 @@ são humanas; boa parte do código, dos testes e da documentação foi escrita c
 **Codex**, os mesmos agentes que o laboratório coloca para trabalhar. É um pouco de IA ajudando a
 construir a casa onde ela mesma vai trabalhar, com as portas trancadas.
 
+## Créditos
+
+Nenhum código de outro repositório foi copiado para cá, mas o projeto se apoia em ferramentas de
+muita gente: Claude Code, Codex, Docker, Squid, Node.js, Debian, Playwright e outras. Também se
+inspirou em ideias do [gh-aw](https://github.com/github/gh-aw), do [OpenHands](https://github.com/OpenHands/OpenHands)
+e do [SWE-agent](https://github.com/SWE-agent/SWE-agent). Lista completa, com licenças, em
+[docs/CREDITOS.md](docs/CREDITOS.md).
+
 ## Contribua
 
 Achou um problema, instalou num sistema diferente ou tem uma ideia? Abra uma

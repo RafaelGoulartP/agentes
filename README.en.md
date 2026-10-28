@@ -102,6 +102,14 @@ This project was built in partnership with AI. Ideas, decisions and reviews are 
 code, tests and docs were written with **Claude Code** and **Codex**, the same agents the lab puts to
 work. AI helping build the house it will work in, with the doors locked.
 
+## Credits
+
+No code from other repositories was copied here, but the project stands on tools built by many
+people: Claude Code, Codex, Docker, Squid, Node.js, Debian, Playwright and more. It was also inspired
+by ideas from [gh-aw](https://github.com/github/gh-aw), [OpenHands](https://github.com/OpenHands/OpenHands)
+and [SWE-agent](https://github.com/SWE-agent/SWE-agent). Full list with licenses:
+[docs/CREDITOS.md](docs/CREDITOS.md).
+
 ## Contributing
 
 Issues and PRs welcome, in English or Portuguese. See [CONTRIBUTING.md](CONTRIBUTING.md).
