@@ -16,6 +16,8 @@ jobs:
         node: [22, 24]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -30,3 +32,5 @@ jobs:
         run: |
           if git ls-files | grep -E '(^|/)(local\.env|config\.env|secrets/[^/]+\.env)$'; then exit 1; fi
           if git grep -nE '(github_pat_[A-Za-z0-9_]{30,}|sk-ant-[A-Za-z0-9_-]{30,}|sk-proj-[A-Za-z0-9_-]{30,})' -- ':!orchestrator/test'; then exit 1; fi
+      - name: Varredura de segredos (gitleaks, histórico inteiro)
+        run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.28.0 git /repo --gitleaks-ignore-path /repo/.gitleaksignore --no-banner --redact
